@@ -103,7 +103,7 @@ fix: bug                        # not descriptive
 WIP                             # no type, no info
 Merge branch 'main' into feat   # merge commit – forbidden
 
-## 🔀 Pull Requests
+## Pull Requests
 
 ### PR Title
 The PR title must follow Conventional Commits – it becomes the squash commit message.
@@ -152,7 +152,7 @@ Closes #12
 Closes <org>/<repo>#42
 Refs <org>/.github#1
 
-## 👀 Reviews & Merging
+## Reviews & Merging
 ### Required Checks
 
 Before merging, the following must pass:
