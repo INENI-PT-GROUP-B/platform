@@ -1,0 +1,66 @@
+# Workspace Context — INENI-PT-GROUP-B
+
+This is the local workspace for the INENI-PT-GROUP-B platform engineering
+project. Repositories are cloned here as siblings: `platform/`,
+`platform-iac/`, `platform-gitops/`, `app-backend/`, `app-frontend/`,
+`.github/`.
+
+## Mandatory session bootstrap
+
+**Before responding to the user's first project-related question, read
+these files in order. Do not answer based on memory alone — always read
+the current files first:**
+
+1. `platform/docs/claude/project-overview.md`
+2. `platform/docs/claude/architecture-decisions.md`
+3. `platform/docs/claude/repository-layout.md`
+4. `platform/docs/claude/conventions.md`
+5. `platform/docs/claude/working-with-claude.md`
+6. `platform/CONTRIBUTING.md`
+
+These files contain the project's hard constraints, tool decisions,
+repository topology, commit/PR rules, and AI usage policy. They override
+any prior assumption.
+
+Read `platform/docs/claude/tooling-reference.md` additionally when the
+question concerns Kubernetes manifests, Terraform, Crossplane, ESO,
+ExternalDNS, cert-manager, CloudNativePG, or Prometheus/Grafana.
+
+## Language rules — strict
+
+These rules apply unconditionally and override any user-level preference
+for INENI-PT-GROUP-B work:
+
+- **All artefacts are written in English.** This includes code, code
+  comments, commit messages, branch names, file names, variable names,
+  pull request titles and descriptions, issue titles and descriptions,
+  release notes, and all committed documentation.
+- **Conversation language in the chat window is the user's choice.** It
+  is configured in the user-level memory (`~/.claude/CLAUDE.md` on
+  Linux/WSL, `%USERPROFILE%\.claude\CLAUDE.md` on Windows). Respect that
+  setting for the conversational wrapper around your output.
+- **Mixed-language artefacts are not allowed.** A commit message in
+  German with English code is wrong. A PR description in German is wrong.
+  An issue body in German is wrong. The user's conversation language has
+  no influence on the artefact language.
+
+## Other precedence
+
+If anything in this workspace's context conflicts with the user-level
+memory at `~/.claude/CLAUDE.md` (Linux/WSL) or
+`%USERPROFILE%\.claude\CLAUDE.md` (Windows), the project context wins
+for INENI-PT-GROUP-B work. The project files at
+`platform/docs/claude/*.md` and `platform/CONTRIBUTING.md` are the
+binding source of truth.
+
+## How this file is maintained
+
+The canonical version of this file lives at
+`platform/docs/setup/workspace-CLAUDE.md.template` in the `platform`
+repository. It is copied by each team member into their local workspace
+root and is not itself committed (the workspace root is not a git repo).
+
+If you change this file locally, consider whether the change should flow
+back to the template via a PR to `platform`. If yes: edit
+`platform/docs/setup/workspace-CLAUDE.md.template`, open a PR, and
+notify the team to re-copy after merge.
