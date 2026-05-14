@@ -10,14 +10,15 @@ a clean, auditable, and consistent project history.
 
 ## Table of Contents
 
-- [General Principles](#-general-principles)
-- [Branching](#-branching)
-- [Commit Messages](#-commit-messages)
-- [Pull Requests](#-pull-requests)
-- [Creating Issues](#-creating-issues)
-- [Issue Linking](#-issue-linking)
-- [Reviews & Merging](#-reviews--merging)
-- [Secrets & Security](#-secrets--security)
+- [General Principles](#general-principles)
+- [Branching](#branching)
+- [Commit Messages](#commit-messages)
+- [Pull Requests](#pull-requests)
+- [Creating Issues](#creating-issues)
+- [Issue Linking](#issue-linking)
+- [Reviews & Merging](#reviews--merging)
+- [Secrets & Security](#secrets--security)
+- [AI Usage Disclosure](#ai-usage-disclosure)
 
 ---
 
