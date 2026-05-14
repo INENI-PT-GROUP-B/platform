@@ -21,7 +21,6 @@ When in doubt, log it.
 ```
 ## YYYY-MM-DD — <short title>
 
-- **Contributor(s):** <github-handle(s)>
 - **Tool:** <name and version where relevant>
 - **Scope:** <repo / component / files>
 - **What:** <what was generated or assisted>
@@ -33,6 +32,19 @@ Each contributor adds their own entries, ideally in the same PR as the
 AI-assisted change.
 
 ---
+
+## 2026-05-12 — Logical infrastructure diagram
+
+- **Tool:** Claude (claude.ai web, Opus 4.7)
+- **Scope:** `platform` — `docs/architecture/logical_architecture.drawio`,
+  `docs/architecture/logical_architecture.drawio.png`
+- **What:** co-designed the logical infrastructure diagram (GCP project,
+  VPC, GKE, Cloud DNS, Secret Manager, GCS, Workload Identity, GHCR,
+  external endpoints) and produced an initial draw.io export.
+- **Verification:** layout, labels, and component relationships were
+  reviewed against `architecture-decisions.md` and `tooling-reference.md`,
+  then manually adjusted and polished in draw.io.
+- **Outcome:** merged via PR #9
 
 ## 2026-05-10 — Initial Claude context bundle
 
