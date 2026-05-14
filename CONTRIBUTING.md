@@ -14,6 +14,7 @@ a clean, auditable, and consistent project history.
 - [Branching](#-branching)
 - [Commit Messages](#-commit-messages)
 - [Pull Requests](#-pull-requests)
+- [Creating Issues](#-creating-issues)
 - [Issue Linking](#-issue-linking)
 - [Reviews & Merging](#-reviews--merging)
 - [Secrets & Security](#-secrets--security)
@@ -134,6 +135,61 @@ Use the provided PR template. It must include:
 6. Address feedback       →  push more commits
 7. Squash & merge         →  PR title becomes commit
 8. Branch auto-deleted    →  done ✅
+
+## Creating Issues
+
+Every issue uses the org-wide template defined in `INENI-PT-GROUP-B/.github`
+at `.github/ISSUE_TEMPLATE/task.yml`. The template is auto-applied in the
+GitHub web UI; when using `gh issue create` on the CLI the same structure
+must be reproduced manually.
+
+### Required structure
+
+| Element        | Value                                                          |
+|----------------|----------------------------------------------------------------|
+| Title prefix   | `[TASK]: `                                                     |
+| Label          | `task`                                                         |
+| Required body  | `Context`, `Scope`, `Acceptance Criteria`, `Grading Pillar`    |
+| Optional body  | `References`                                                   |
+
+Each body section is introduced by a `###` heading.
+
+### Grading Pillar values
+
+Pick exactly one:
+
+- `Documentation & Software Management Hygiene`
+- `Infrastructure Bootstrap`
+- `Application Management`
+- `Presentation`
+- `Bonus`
+
+### Creating issues via `gh` CLI
+
+The form template only applies in the web UI. When using `gh issue create`,
+reproduce all four required sections in the body and pass `--label task`
+explicitly:
+
+```bash
+gh issue create \
+  -R INENI-PT-GROUP-B/<repo> \
+  --label task \
+  --title '[TASK]: <short imperative summary>' \
+  --body "$(cat <<'EOF'
+### Context
+...
+
+### Scope
+...
+
+### Acceptance Criteria
+- [ ] ...
+
+### Grading Pillar
+<one of the values above>
+EOF
+)"
+```
 
 ## Issue Linking
 Every PR must reference an issue.
