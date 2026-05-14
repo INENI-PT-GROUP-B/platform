@@ -7,6 +7,21 @@
 > When in doubt — or when working on something not covered here — read
 > `CONTRIBUTING.md` directly.
 
+## Issues
+
+Every issue uses the org template `task.yml` from `INENI-PT-GROUP-B/.github`.
+Canonical rule: [`CONTRIBUTING.md` § Creating Issues](../../CONTRIBUTING.md#-creating-issues).
+
+Quick reference:
+- title: `[TASK]: <short imperative summary>`
+- label: `task`
+- body sections (`###` headings): `Context`, `Scope`, `Acceptance Criteria`,
+  `Grading Pillar` (required); `References` (optional)
+- `Grading Pillar` is one of: `Documentation & Software Management Hygiene`,
+  `Infrastructure Bootstrap`, `Application Management`, `Presentation`, `Bonus`
+- when using `gh issue create`, reproduce the same sections in `--body` and
+  pass `--label task` explicitly
+
 ## Branching
 
 Branch from `main`, name as `<initials>/<type>/<short-description>`.
