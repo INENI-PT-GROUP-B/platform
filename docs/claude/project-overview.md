@@ -7,8 +7,8 @@
 
 A Kubernetes-based platform that provisions isolated, multi-tenant SaaS application
 instances on demand. Each tenant receives their own namespace with a dedicated
-application stack (frontend, backend, database) provisioned via GitOps and
-Crossplane.
+application instance (Gitea, backed by a per-tenant CloudNativePG Postgres database)
+provisioned via GitOps and Crossplane.
 
 This is the assignment for the **Infrastructure Engineering** course at
 Hochschule Burgenland, summer term 2026.
@@ -51,9 +51,13 @@ These rules are non-negotiable and must be reflected in every decision:
   with Google Secret Manager.
 - **No direct commits to `main`.** All changes go through pull requests.
   See [`CONTRIBUTING.md`](../../CONTRIBUTING.md) for the full workflow.
-- **No manual click after IaC kickoff.** Once `terraform apply` runs, the
-  platform deploys end-to-end without human intervention. Documented exceptions
-  for unavoidable glue points are permitted but must stay minimal.
+- **One-click deployment via a single bootstrap script — not a CI pipeline.**
+  A shell script (`platform/scripts/bootstrap.sh`) runs `terraform apply` and
+  the Argo CD root-`Application` handoff in one go. From that point Argo CD
+  reconciles every platform component and tenant claim. No CI-driven
+  application deployment, no manual `kubectl apply` after the script
+  finishes. Documented exceptions for unavoidable glue points are permitted
+  but must stay minimal.
 - **GitHub Actions OIDC → GCP Workload Identity Federation.** No long-lived
   service account JSON keys in GitHub secrets.
 - **Conventional Commits + squash merge.** No merge commits. Linear history.

@@ -38,6 +38,31 @@ bucket (versioned, with state locking).
 Authentication from CI: **GitHub Actions OIDC → GCP Workload Identity
 Federation**. No long-lived service account JSON keys.
 
+## Bootstrap orchestration
+
+Day 1 is orchestrated by a single shell script,
+`platform/scripts/bootstrap.sh`, executable from any developer machine with
+GCP credentials and a clean clone of `platform-iac` plus `platform-gitops`.
+The script runs in order:
+
+1. `terraform -chdir=platform-iac apply` — provisions cluster, IAM,
+   networking, and installs Argo CD via Helm.
+2. `gcloud container clusters get-credentials …` — local kubeconfig.
+3. Waits for `deployment/argocd-server` to become `Available`.
+4. Applies the root Argo CD `Application` (one-shot `kubectl apply`). From
+   this point Argo CD self-reconciles and provisions every platform
+   component and tenant from `platform-gitops`.
+
+Idempotent on re-run. Chosen over a CI-pipeline-driven deployment because
+(a) bootstrap is a one-time-per-environment action where a shell script is
+more auditable than a workflow file, (b) the script is runnable from a
+developer machine without giving CI access to long-lived cluster state, and
+(c) it keeps Day 1 entirely outside the application-deployment surface.
+
+The `terraform.yml` CI workflow stays as **plan-only** validation for
+infrastructure PRs (OIDC-authenticated to GCP via Workload Identity
+Federation, as above). CI never runs `terraform apply`.
+
 ## GitOps
 
 **Argo CD**.
@@ -66,6 +91,20 @@ this scope.
 - **TLS:** **cert-manager** issuing certificates via **Let's Encrypt ACME**
   using the **DNS-01 challenge** against Cloud DNS.
 
+## Ingress controller
+
+**Traefik**, deployed via the upstream Helm chart. `ingressClassName: traefik`
+is set as the cluster default. A single LoadBalancer Service backs all tenant
+Ingresses through host-based routing on `*.fhuebung.lol` — one LB IP keeps
+cloud cost low.
+
+Tenant Ingresses use the standard Kubernetes `Ingress` resource with a
+`cert-manager.io/cluster-issuer: letsencrypt` annotation; we do not use
+Traefik's CRD-flavoured `IngressRoute` because the standard resource covers
+our routing needs and keeps the tenant chart portable.
+
+Chosen over ingress-nginx, which entered upstream maintenance mode in 2025.
+
 ## Database
 
 **CloudNativePG** in-cluster.
@@ -76,6 +115,15 @@ Cloud SQL for cost (in-cluster, no managed-service premium) and to demonstrate
 Crossplane composing in-cluster resources.
 
 Automated upgrades are handled by CloudNativePG's rolling update feature.
+
+## Persistent storage
+
+GKE's default `standard-rwo` StorageClass (regional balanced Persistent Disk,
+`WaitForFirstConsumer` binding). Backs both per-tenant Gitea PVCs (size set
+via the Tenant claim) and CloudNativePG-managed Postgres PVCs.
+
+No custom StorageClass is authored — using the cluster default keeps the
+platform portable to other GKE clusters with zero changes.
 
 ## Multi-tenancy and SaaS provisioning
 
@@ -92,7 +140,9 @@ The flow:
    - a CloudNativePG database `Cluster`
    - network policies isolating the namespace
    - a Kubernetes `ResourceQuota` and `LimitRange`
-   - any glue resources (image-pull secrets, ServiceAccounts) needed by the app
+   - a ServiceAccount for the tenant Gitea instance
+   - an `ExternalSecret` seeding the Gitea admin bootstrap credentials from
+     Google Secret Manager
 3. An **ApplicationSet** in `applicationsets/` generates the Argo CD
    `Application` for the tenant's app deployment, parameterized by the tenant
    claim.
@@ -100,38 +150,54 @@ The flow:
 Soft multi-tenancy is sufficient per the assignment; hard multi-tenancy and
 virtual clusters are out of scope.
 
-## Container registry
+## Container images
 
-**GitHub Container Registry (GHCR)**.
+- Tenant application: `docker.gitea.com/gitea/gitea:<tag>` (public).
+- Platform components: official upstream images pulled by their respective
+  Helm charts (Argo CD, Crossplane, CloudNativePG, Traefik, cert-manager,
+  ExternalDNS, External Secrets Operator, kube-prometheus-stack).
 
-- Backend image: public (`ghcr.io/ineni-pt-group-b/app-backend`)
-- Frontend image: private (`ghcr.io/ineni-pt-group-b/app-frontend`)
-
-The frontend image pull requires a registry credential, synced into tenant
-namespaces via ESO.
+No GHCR usage, no custom image builds, no image-pull secrets in tenant
+namespaces. An earlier plan to publish a custom backend image (public GHCR)
+and a custom frontend image (private GHCR with per-tenant ESO-synced pull
+secret) is obsolete after the pivot to Gitea (see "The application").
 
 ## The application
 
-A **custom minimal 3-tier application**, generated specifically for this project.
-Lightweight stack to keep per-tenant resource footprint small.
+**Gitea**, deployed via the upstream Helm chart from
+`oci://docker.gitea.com/charts/gitea` (pinned version). Each tenant gets a
+dedicated Gitea instance backed by a per-tenant CloudNativePG Postgres database,
+reachable at `<tenant>.fhuebung.lol`.
 
-**App contract** (the deployment surface that Crossplane targets):
+Replaces an earlier plan to author a custom 3-tier backend/frontend application.
+Switching to an off-the-shelf application keeps platform engineering — not
+application authoring — as the project's focus, while still satisfying the
+multi-tenant deliverable: Gitea is a real SaaS-style workload (Git hosting,
+web UI, REST API, persistent repository data, per-tenant admin users) with
+clear isolation requirements (separate database, separate admin credentials,
+separate persistence per tenant).
 
-- Backend
-  - Image: `ghcr.io/ineni-pt-group-b/app-backend:<tag>`
-  - Port: `3000`
-  - Health endpoint: `GET /healthz` (returns 200 when ready)
-  - Required env vars: `DATABASE_URL`, `PORT`
-  - Schema migration: runs automatically on backend start (idempotent)
-- Frontend
-  - Image: `ghcr.io/ineni-pt-group-b/app-frontend:<tag>`
-  - Port: `80` (nginx serving static files)
-  - Backend URL injection: runtime config via `/config.js` (preferred) or
-    `VITE_API_URL` at build time
+**App contract** (the deployment surface that Crossplane and the wrapper chart
+target):
 
-The exact stack (Node/Fastify, Vue/React, etc.) will be decided at the time
-of generation. Stack choice does not affect the platform — only the contract
-above is contractual.
+- Image: `docker.gitea.com/gitea/gitea:<tag>` (public — no pull secret needed)
+- Persistence: a single PVC per tenant for the repository data directory
+  (size set via the Tenant claim)
+- Database: external Postgres URL pointing at the tenant's CloudNativePG
+  `Cluster`, composed from the CNPG-issued connection Secret
+- Ingress: `<tenant>.fhuebung.lol` → tenant Gitea Service (single Service —
+  Gitea is monolithic, no frontend/backend split)
+- Admin bootstrap: a post-install Job in the tenant chart creates the
+  tenant's initial admin user via `gitea admin user create`, reading
+  credentials from a tenant-namespace Secret seeded by ESO from Google Secret
+  Manager
+
+No custom application code is authored. The `app-backend` and `app-frontend`
+repositories are archived (see [`repository-layout.md`](./repository-layout.md)).
+Application **version** changes are made via a single PR in `platform-gitops`
+bumping the chart-dependency version in `charts/tenant-app/Chart.yaml` —
+satisfying the assignment requirement that updates roll out to all tenants
+with a single change.
 
 ## Monitoring (bonus task)
 

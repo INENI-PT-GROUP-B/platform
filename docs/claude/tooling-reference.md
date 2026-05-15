@@ -35,8 +35,12 @@ is sufficient for our scope.
 ### Health probes
 
 Every workload must define `livenessProbe` and `readinessProbe`. For HTTP
-workloads, hit the `/healthz` endpoint (our backend contract). Without
-probes, rolling updates and self-healing don't work properly.
+workloads, hit the application's health endpoint. For Gitea, the upstream
+Helm chart configures sensible defaults (`/api/healthz` for readiness, `/`
+for liveness baseline). Per-tenant overrides can adjust
+`initialDelaySeconds` for cold-start scenarios where the Postgres backend is
+still being provisioned by CNPG. Without probes, rolling updates and
+self-healing don't work properly.
 
 ## GitOps with Argo CD
 
@@ -110,10 +114,16 @@ by the Crossplane Composition for that tenant. They reference per-tenant
 secrets in Google Secret Manager (e.g. database credentials Crossplane
 just created).
 
-### Image pull secrets
+### Tenant-secret rendering
 
-The frontend image is private (GHCR). The image-pull secret for GHCR is
-synced into each tenant namespace via ESO from Google Secret Manager.
+ESO is used for per-tenant secrets that don't involve image pulls: the
+Gitea admin bootstrap seed (rendered into a Kubernetes `Secret` consumed by
+the post-install Job) and the LE account credentials used by the
+platform-wide ClusterIssuer. The CNPG-issued Postgres credentials are
+produced by CNPG itself and don't go through ESO.
+
+No image-pull secrets are needed — the tenant application (Gitea) is
+pulled from a public registry (`docker.gitea.com`).
 
 ## DNS and TLS
 
@@ -142,6 +152,36 @@ ClusterIssuer references the ACME endpoint and a service account with
 - Certificate renewal is automatic but logs are worth checking after
   a domain or DNS change.
 
+## Traefik (ingress)
+
+Replaces ingress-nginx, which entered upstream maintenance mode in 2025.
+
+### Setup
+
+Installed via the upstream Helm chart. `ingressClassName: traefik` is set
+as the cluster default in the Helm values. A single LoadBalancer Service
+is exposed; `*.fhuebung.lol` resolves to its IP via ExternalDNS, and host-
+based routing distinguishes tenants.
+
+### Tenant Ingress shape
+
+Tenant Ingresses use the standard Kubernetes `Ingress` resource (not
+Traefik's `IngressRoute` CRD) so the wrapper chart stays portable. Two
+annotations matter:
+
+- `cert-manager.io/cluster-issuer: letsencrypt` — triggers cert-manager to
+  issue a per-host TLS cert.
+- `external-dns.alpha.kubernetes.io/hostname: <tenant>.fhuebung.lol` —
+  optional; ExternalDNS picks up the `host` field by default but the
+  explicit annotation is safer.
+
+### Common pitfalls
+
+- Forgetting to set `ingressClassName` on the tenant Ingress — Traefik
+  ignores Ingresses without it, even if Traefik is the cluster default.
+- Multiple Ingresses on the same host with conflicting paths — last-write-
+  wins in some Traefik versions. Use distinct host names per tenant.
+
 ## CloudNativePG
 
 ### Per-tenant clusters
@@ -168,6 +208,36 @@ that Secret via ESO or a Crossplane patch — never hardcoded.
 CloudNativePG handles minor version upgrades with rolling restarts.
 Major version upgrades (e.g. PG 15 → 16) require explicit planning but
 are also automated by the operator.
+
+## Persistent storage
+
+### Default StorageClass
+
+GKE's default `standard-rwo` (regional balanced Persistent Disk,
+`WaitForFirstConsumer` binding mode). We don't author a custom
+StorageClass — relying on the cluster default keeps the platform portable
+to other GKE clusters.
+
+### Per-tenant PVCs
+
+Each tenant generates two persistent-volume claims at provisioning time:
+
+- One PVC for Gitea's repository data directory (created by the upstream
+  Gitea chart, size set via the Tenant claim).
+- One or more PVCs for the CNPG `Cluster` (managed by the CNPG operator,
+  one per Postgres instance — typically 1 for cost, 3 for HA).
+
+Both land on `standard-rwo`. The `WaitForFirstConsumer` binding mode means
+PVs are only created once the consuming pod is scheduled, which avoids
+zone-affinity surprises on multi-zone clusters.
+
+### Reclaim policy
+
+`Delete` is the default for dynamically-provisioned PVs on `standard-rwo`.
+When a tenant claim is removed, Crossplane tears down the namespace, the
+chart removes the PVCs, and the underlying PD disks are deleted. For demo
+purposes this is desired; for any real production scope you would switch
+to `Retain` plus an explicit lifecycle policy.
 
 ## Prometheus and Grafana
 

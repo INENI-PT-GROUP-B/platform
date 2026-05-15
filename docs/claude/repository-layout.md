@@ -5,9 +5,10 @@
 
 ## Overview
 
-The platform spans six repositories. Five are public; only `app-frontend` is
-private (per assignment requirement). All repositories follow the conventions
-in [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
+The platform spans six repositories. Five are public; `app-frontend` is
+private (per the original assignment requirement, retained for git-history
+visibility after the pivot to Gitea). All repositories follow the
+conventions in [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
 
 | Repo               | Visibility | Purpose                              |
 | ------------------ | ---------- | ------------------------------------ |
@@ -15,8 +16,8 @@ in [`CONTRIBUTING.md`](../../CONTRIBUTING.md).
 | `platform-iac`     | public     | Terraform for GCP infrastructure     |
 | `platform-gitops`  | public     | Argo CD + Crossplane + Helm values   |
 | `.github`          | public     | Org-wide defaults                    |
-| `app-backend`      | public     | Application backend (REST API)       |
-| `app-frontend`     | private    | Application frontend (SPA)           |
+| `app-backend`      | public     | Archived after pivot to Gitea        |
+| `app-frontend`     | private    | Archived after pivot to Gitea        |
 
 ## platform
 
@@ -27,11 +28,15 @@ Contents:
 - `README.md` — project overview, links to all repos and key docs
 - `CONTRIBUTING.md` — canonical conventions for the entire org
 - `AI_USAGE.md` — log of generative AI usage across the project
+- `scripts/bootstrap.sh` — Day-1 orchestration: `terraform apply` →
+  kubeconfig → Argo CD root sync. See
+  [`architecture-decisions.md`](./docs/claude/architecture-decisions.md#bootstrap-orchestration)
 - `docs/cost-planning/` — capacity and cost estimates with dated snapshots
 - `docs/claude/` — context bundle for AI-assisted work (this folder)
 - `docs/architecture/` — diagrams, design notes (added as needed)
 
-This repo contains no code, only documentation and shared agreements.
+This repo contains no application code, only documentation, the bootstrap
+script, and shared agreements.
 
 ## platform-iac
 
@@ -101,33 +106,18 @@ uses: INENI-PT-GROUP-B/.github/.github/workflows/commitlint-reusable.yml@main
 
 ## app-backend
 
-The application's REST API. Public repository, public GHCR image
-(`ghcr.io/ineni-pt-group-b/app-backend`).
-
-Contents:
-- Application source code
-- `Dockerfile` — multi-stage build, Alpine-based
-- `.github/workflows/` — CI for lint, test, image build, image push to GHCR
-  on tag or release
-- `README.md` — local dev setup, env-var contract, API description
-
-App contract: see
-[`architecture-decisions.md`](./architecture-decisions.md#the-application).
-
-> **Note:** at the time of writing, this repo is still a fork of the lecturer's
-> reference application. It will be replaced with our own minimal application
-> (delete fork, create fresh repo) before we start the application management
-> pillar.
+Originally planned as the application's REST API. After the pivot to Gitea
+(see [`architecture-decisions.md`](./architecture-decisions.md#the-application)),
+this repo is archived. No code we own lives here. Retained for git-history
+visibility — the earlier fork of the lecturer's reference application is the
+last commit on `main`.
 
 ## app-frontend
 
-The application's single-page frontend. **Private** repository, private GHCR
-image (`ghcr.io/ineni-pt-group-b/app-frontend`).
-
-Contents: analogous to `app-backend` (source, Dockerfile, CI workflows, README).
-
-The image-pull secret for GHCR is synced per tenant namespace via ESO.
-Lecturer (`@muhlba91`) has admin access to this private repo.
+Originally planned as the application's single-page frontend. After the
+pivot to Gitea, this repo is archived. No code we own lives here. Retained
+for git-history visibility. The repo remains private (per original
+assignment requirement); lecturer (`@muhlba91`) retains admin access.
 
 ## How the repos fit together
 
@@ -148,8 +138,10 @@ platform-gitops/tenants/  →  Tenant claim added
                    Crossplane provisions per-tenant resources
                           ↓
                    ApplicationSet generates the tenant's
-                   Argo CD Application, pulling app-backend
-                   and app-frontend images from GHCR
+                   Argo CD Application, which deploys Gitea
+                   via the wrapper chart (charts/tenant-app/)
+                   referencing the upstream Helm chart at
+                   oci://docker.gitea.com/charts/gitea
 ```
 
 **Adding a new tenant** is a single PR to `platform-gitops/tenants/`. No
@@ -162,11 +154,12 @@ reconciles after merge.
 **Updating the cluster topology** (e.g. adding a node pool) is a PR to
 `platform-iac`, applied after review.
 
-**Application code changes** (`app-backend`, `app-frontend`) trigger an image
-rebuild and produce a new image tag. The rollout to all tenants happens via a
-single change in `platform-gitops` updating the image tag — satisfying the
-assignment requirement "updates rolled out to all tenants with a single
-change".
+**Application version changes** (Gitea release upgrades) are made via a
+single PR in `platform-gitops` bumping the chart-dependency version in
+`charts/tenant-app/Chart.yaml`. After `helm dependency update` and merge,
+Argo CD reconciles the new Gitea version across all tenant namespaces —
+satisfying the assignment requirement "updates rolled out to all tenants
+with a single change".
 
 ## Cross-repo references in commits and PRs
 
