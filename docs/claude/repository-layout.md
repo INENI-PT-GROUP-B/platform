@@ -65,21 +65,22 @@ Directory layout (already established):
 | Path                         | Purpose                                                         |
 | ---------------------------- | --------------------------------------------------------------- |
 | `applications/`              | Argo CD `Application` manifests for platform components         |
-| `applicationsets/`           | `ApplicationSet` manifests that template tenant Applications    |
+| `applicationsets/`           | `ApplicationSet` manifests; currently reserved — tenant apps are deployed by Crossplane via `provider-helm`, not via ApplicationSets |
 | `crossplane/providers/`      | Crossplane provider configurations                              |
 | `crossplane/xrds/`           | Composite Resource Definitions (XRDs)                           |
 | `crossplane/compositions/`   | Compositions implementing the XRDs                              |
-| `tenants/`                   | Tenant **claims** — one file or folder per tenant               |
-| `values/`                    | Helm values for platform components                             |
+| `tenants/`                   | Tenant **claims** — one file or folder per tenant (including a dedicated `staging.yaml`) |
+| `values/`                    | Helm values for platform components, plus `app-version.yaml` (central image tag for the tenant app) |
 | `.github/workflows/`         | CI for `yamllint`, `helm lint`, `kubeconform` on PRs            |
 
 Onboarding flow:
 
 1. PR adds a Tenant claim under `tenants/`.
-2. Argo CD reconciles, Crossplane picks up the claim and provisions the
-   per-tenant infrastructure via the matching Composition.
-3. The relevant ApplicationSet emits an Argo CD Application for the tenant's
-   app deployment.
+2. Argo CD reconciles the claim into the cluster as a custom resource.
+3. Crossplane picks up the claim and, via its Composition, provisions
+   the per-tenant infrastructure (namespace, DB, network policies, quotas,
+   secrets) and the tenant app as a Helm `Release` rendered by
+   `provider-helm` (chart pulled from GHCR as an OCI artefact).
 4. Tenant is live.
 
 ## .github
@@ -114,10 +115,10 @@ Contents:
 App contract: see
 [`architecture-decisions.md`](./architecture-decisions.md#the-application).
 
-> **Note:** at the time of writing, this repo is still a fork of the lecturer's
-> reference application. It will be replaced with our own minimal application
-> (delete fork, create fresh repo) before we start the application management
-> pillar.
+> **Status:** the application repositories and stack are not yet finalised.
+> Concrete decisions (own repo vs. lecturer fork, backend/frontend
+> frameworks, domain model, Helm chart location) are tracked in a separate
+> issue. This section is updated once that issue closes.
 
 ## app-frontend
 
@@ -139,17 +140,16 @@ platform-iac     →  GKE cluster + Argo CD installed
                    Argo CD points at platform-gitops
                           ↓
 platform-gitops  →  Platform components installed
-                    (ESO, ExternalDNS, cert-manager, Crossplane,
+                    (ESO, ExternalDNS, cert-manager, Traefik, Crossplane,
                     CloudNativePG, Prometheus, Grafana,
                     plus Argo CD self-managing from here on)
                           ↓
 platform-gitops/tenants/  →  Tenant claim added
                           ↓
-                   Crossplane provisions per-tenant resources
-                          ↓
-                   ApplicationSet generates the tenant's
-                   Argo CD Application, pulling app-backend
-                   and app-frontend images from GHCR
+                   Crossplane provisions per-tenant resources and
+                   renders the app Helm chart (pulled from GHCR as
+                   an OCI artefact) into the tenant namespace via
+                   provider-helm
 ```
 
 **Adding a new tenant** is a single PR to `platform-gitops/tenants/`. No
