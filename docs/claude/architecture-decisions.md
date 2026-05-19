@@ -24,8 +24,10 @@ feature parity, and reasonable pricing.
   network policies, and multi-tenancy primitives.
 - Zonal (not regional) to keep cost low — one control plane, nodes in a single
   zone. The assignment explicitly permits this.
-- Worker nodes: 3 × `e2-standard-4` (12 vCPU / 48 GB total). See cost planning
-  in `docs/cost-planning/`.
+- Worker nodes: 3–6 × `e2-standard-4` with the GKE Cluster Autoscaler enabled
+  (12–24 vCPU, 48–96 GB at the bounds). The lower bound covers the platform
+  baseline plus a few small tenants; the upper bound provides headroom for
+  tenant growth during the project. See cost planning in `docs/cost-planning/`.
 
 ## Infrastructure as Code
 
@@ -100,26 +102,49 @@ Automated upgrades are handled by CloudNativePG's rolling update feature.
 
 ## Multi-tenancy and SaaS provisioning
 
-**Crossplane** with custom XRDs and Compositions, plus **Argo CD ApplicationSets**
-for tenant application generation.
+**Crossplane** with custom XRDs and Compositions. Crossplane's `provider-helm`
+deploys the tenant application as a Helm release directly — no Argo CD
+ApplicationSet is involved for tenant app deployment.
 
 The flow:
 
 1. A new tenant is onboarded by adding a **Tenant claim** (namespaced) under
-   `platform-gitops/tenants/`.
+   `platform-gitops/tenants/`. Argo CD syncs the claim into the cluster as
+   a custom resource.
 2. Crossplane reconciles the claim against the matching Composition, which
-   provisions:
+   provisions in one step:
    - a dedicated namespace
-   - a CloudNativePG database `Cluster`
+   - a CloudNativePG database `Cluster` (operator creates the credentials
+     Secret next to it)
    - network policies isolating the namespace
    - a Kubernetes `ResourceQuota` and `LimitRange`
-   - any glue resources (image-pull secrets, ServiceAccounts) needed by the app
-3. An **ApplicationSet** in `applicationsets/` generates the Argo CD
-   `Application` for the tenant's app deployment, parameterized by the tenant
-   claim.
+   - `ExternalSecret` resources for the GHCR pull secret and the
+     application login password
+   - a Helm `Release` (via `provider-helm`) that pulls the app chart from
+     GHCR as an OCI artefact and renders frontend, backend, services, and
+     ingress into the namespace
+3. The tenant is live once Crossplane reports the Composition as ready
+   and ExternalDNS has published the DNS record.
+
+This split satisfies the assignment requirement "Crossplane to handle all
+other deployment steps" and at the same time captures the Helm-chart bonus.
 
 Soft multi-tenancy is sufficient per the assignment; hard multi-tenancy and
 virtual clusters are out of scope.
+
+## Application updates and staging
+
+The application image tag every tenant runs is held in a single file in
+`platform-gitops`: `values/app-version.yaml`. The Crossplane Composition
+reads this value when rendering each tenant's Helm release.
+
+- **Rolling out a new version to all tenants**: change the tag in
+  `values/app-version.yaml`, open a PR, merge. Crossplane re-renders every
+  tenant's Release; provider-helm performs a rolling upgrade per tenant.
+- **Testing on a staging tenant first**: the optional `imageTagOverride`
+  field on a tenant claim beats the central value for that one tenant.
+  The dedicated `staging` tenant uses this to receive new versions before
+  the central rollout.
 
 ## Container registry
 
@@ -127,6 +152,9 @@ virtual clusters are out of scope.
 
 - Backend image: public (`ghcr.io/ineni-pt-group-b/app-backend`)
 - Frontend image: private (`ghcr.io/ineni-pt-group-b/app-frontend`)
+- App Helm chart: public OCI artefact
+  (`ghcr.io/ineni-pt-group-b/app-chart`), pulled by Crossplane's
+  `provider-helm` when reconciling a tenant claim
 
 The frontend image pull requires a registry credential, synced into tenant
 namespaces via ESO.
@@ -136,23 +164,33 @@ namespaces via ESO.
 A **custom minimal 3-tier application**, generated specifically for this project.
 Lightweight stack to keep per-tenant resource footprint small.
 
-**App contract** (the deployment surface that Crossplane targets):
+> **Status:** the concrete decisions around the application — final stack
+> (backend framework, frontend framework, database driver), domain model,
+> authentication mechanism, repository status (own repo vs. lecturer fork),
+> and the location of the Helm chart — are tracked in a separate issue.
+> When that issue closes, the relevant sections in this document and in
+> `repository-layout.md` are updated to reflect the final state.
+
+The following pieces are already settled and act as the **deployment contract**
+that Crossplane targets:
 
 - Backend
   - Image: `ghcr.io/ineni-pt-group-b/app-backend:<tag>`
   - Port: `3000`
   - Health endpoint: `GET /healthz` (returns 200 when ready)
-  - Required env vars: `DATABASE_URL`, `PORT`
+  - Required env vars: `DATABASE_URL`, `PORT`, `APP_PASSWORD`
   - Schema migration: runs automatically on backend start (idempotent)
 - Frontend
   - Image: `ghcr.io/ineni-pt-group-b/app-frontend:<tag>`
   - Port: `80` (nginx serving static files)
   - Backend URL injection: runtime config via `/config.js` (preferred) or
     `VITE_API_URL` at build time
-
-The exact stack (Node/Fastify, Vue/React, etc.) will be decided at the time
-of generation. Stack choice does not affect the platform — only the contract
-above is contractual.
+- Auth surface
+  - Single application-level password per tenant
+  - Plaintext stored in GSM, synced to the namespace as `APP_PASSWORD` via ESO
+  - Backend hashes the value on startup (bcrypt, in memory) and verifies
+    login requests against the in-memory hash
+  - Plaintext never leaves GSM and the backend's process memory
 
 ## Monitoring (bonus task)
 
