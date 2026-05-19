@@ -46,7 +46,9 @@ Federation**. No long-lived service account JSON keys.
 
 Chosen over Flux for the better UI (helpful for the demo and for debugging
 sync state) and broader community adoption. App-of-Apps pattern for the
-platform layer; per-tenant Applications generated via ApplicationSets.
+platform layer. Tenant resources are not per-tenant Argo CD Applications:
+Argo CD only syncs the tenant claims from `tenants/`, and Crossplane takes
+over from there (see § Multi-tenancy and SaaS provisioning).
 
 ## Secrets management
 
