@@ -1,0 +1,9 @@
+# Normalise text files to LF regardless of platform autocrlf settings.
+* text=auto eol=lf
+
+# Drawio source files are XML — explicit LF.
+*.drawio text eol=lf
+
+# Binary files — explicit so git never normalises them.
+*.png binary
+*.pdf binary
