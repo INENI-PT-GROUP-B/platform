@@ -47,12 +47,15 @@ which contains child `Application` manifests for each platform component.
 Bootstrapping the root from `platform-iac` is enough — Argo CD reconciles
 the rest.
 
-### ApplicationSets for tenants
+### Tenant app deployment (not via ApplicationSets)
 
-Tenant Argo CD `Application` objects are templated, not handwritten.
-An `ApplicationSet` in `applicationsets/` watches the `tenants/` directory
-(or a generator) and emits one Application per tenant. Adding a tenant
-means adding a claim, not adding an Application.
+Tenant applications are not deployed via Argo CD `Application` objects.
+Argo CD only syncs the tenant claim under `tenants/` into the cluster
+as a custom resource. Crossplane then reconciles the claim against
+the matching Composition, which uses `provider-helm` to render the
+application's Helm chart into the tenant namespace. The
+`applicationsets/` directory in `platform-gitops` is reserved; it is
+not in the tenant app deployment path.
 
 ### Sync policies
 
@@ -91,6 +94,16 @@ the necessary IAM roles (created via `platform-iac`).
 If we use Composition Functions (the newer Crossplane v1.14+ pattern over
 patch-and-transform), each Composition declares a `pipeline` of functions.
 Common functions: `function-patch-and-transform`, `function-go-templating`.
+
+### provider-helm for tenant app deployment
+
+Each tenant's Composition uses Crossplane's `provider-helm` to deploy
+the application as a Helm release into the tenant namespace. The chart
+is pulled from GHCR as an OCI artefact
+(`ghcr.io/ineni-pt-group-b/app-chart`) and rendered with values derived
+from the claim plus the central image tag in
+`platform-gitops/values/app-version.yaml`. `provider-helm` is loaded
+alongside `provider-gcp` and `provider-kubernetes`.
 
 ## External Secrets Operator (ESO)
 
