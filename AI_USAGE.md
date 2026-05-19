@@ -33,6 +33,48 @@ AI-assisted change.
 
 ---
 
+## 2026-05-19 — Architecture refinements from lecturer feedback (PRs #18, #20)
+
+- **Tool:** Claude (claude.ai web, Opus 4.7) for the textual updates
+  and diagram redesign; Claude Code (local, WSL) for PR-split strategy,
+  branch / commit / PR drafting, and `gh` operations
+- **Scope:** `platform` — `docs/architecture/logical_architecture.drawio`
+  (+ PNG export), new `docs/architecture/README.md`, and the three
+  `docs/claude/` documents (`architecture-decisions.md`,
+  `repository-layout.md`, `tooling-reference.md`)
+- **What:** addressed the four lecturer-feedback points on the diagram
+  (Traefik instead of ingress-nginx, corrected ArgoCD ↔ Crossplane ↔
+  Tenants arrows, backend exposed via ingress alongside the frontend,
+  monitoring + persistent storage visible), and the architectural
+  refinements that came out of the same feedback round (Crossplane
+  `provider-helm` replacing ApplicationSets for tenant app deployment,
+  central `values/app-version.yaml` + `imageTagOverride` staging,
+  GKE Cluster Autoscaler 3–6, `APP_PASSWORD` auth contract,
+  CloudNativePG-managed DB credentials, `app-chart` OCI artefact).
+- **Verification:** Claude Code diffed against issue #16's acceptance
+  criteria, flagged the additional architectural changes beyond the
+  issue's scope, proposed a 2-PR split (#18 = diagram + Ingress ADR
+  closing #16; #20 = textual refinements closing follow-up issue #19),
+  and authored the PR bodies + commit messages.
+- **Outcome:** merged — PR #18 (diagram + Ingress ADR, closes #16) and
+  PR #20 (textual refinements, closes #19).
+
+## 2026-05-19 — Application stack and deployment plan (issue #21)
+
+- **Tool:** Claude (claude.ai web, Opus 4.7) for drafting; Claude Code
+  (local, WSL) for template-compliance review and `gh issue create`
+- **Scope:** `platform` — issue #21 body
+- **What:** drafted the concrete application proposal — story (property
+  management for landlords), stack choices (Node/Fastify/Drizzle,
+  React/Vite/Tailwind, JWT-in-cookie auth), Helm chart layout in
+  `app-backend/chart/`, six-phase execution sequence, sign-off
+  requirements.
+- **Verification:** reviewed against the deployment contract in
+  `architecture-decisions.md`, removed one dead reference
+  (`000-assignment_en.md`), verified `[TASK]` template compliance
+  (Context / Scope / Acceptance Criteria / Grading Pillar).
+- **Outcome:** open as issue #21, pending team sign-off before phase 1.
+
 ## 2026-05-12 — Logical infrastructure diagram
 
 - **Tool:** Claude (claude.ai web, Opus 4.7)
