@@ -66,6 +66,27 @@ this scope.
 - **TLS:** **cert-manager** issuing certificates via **Let's Encrypt ACME**
   using the **DNS-01 challenge** against Cloud DNS.
 
+## Ingress
+
+**Traefik** as the in-cluster ingress controller.
+
+Chosen over ingress-nginx because the latter reaches end-of-life in March 2026.
+Traefik is actively maintained, has good native integration with Kubernetes
+Ingress resources, and renders the wildcard certificate (`*.fhuebung.lol`)
+issued by cert-manager.
+
+The Traefik deployment exposes three host patterns:
+
+- `*.fhuebung.lol` — tenant applications, with path-based routing: `/` → tenant
+  frontend, `/api` → tenant backend. Path-based (not host-based) routing is
+  required because the wildcard certificate covers only one subdomain level.
+- `argocd.fhuebung.lol` — Argo CD UI
+- `grafana.fhuebung.lol` — Grafana UI
+
+The Kubernetes `Service` backing Traefik is of type `LoadBalancer`, which
+makes GKE provision a Google Cloud L4 load balancer with a public IP.
+TLS is terminated in Traefik, not in the load balancer.
+
 ## Database
 
 **CloudNativePG** in-cluster.
