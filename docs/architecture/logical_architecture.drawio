@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="claude">
   <diagram name="01 Logical Infrastructure" id="logical-infra">
-    <mxGraphModel dx="2816" dy="1814" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2800" dy="1796" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -19,7 +19,7 @@
         <mxCell id="6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#ffe6cc;strokeColor=#d79b00;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;GHCR&lt;br&gt;&lt;/b&gt;ghcr.io/ineni-pt-group-b/&lt;br&gt;• app-backend (public)&lt;br&gt;• app-frontend (private)&lt;br&gt;• app-chart (OCI, public)" vertex="1">
           <mxGeometry height="100" width="193" x="1799" y="558" as="geometry" />
         </mxCell>
-        <mxCell id="7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#ffe6cc;strokeColor=#d79b00;dashed=0;verticalAlign=middle;align=center;arcSize=14;" value="&lt;b&gt;platform-gitops&lt;/b&gt;&lt;br&gt;(Git source for Argo CD&lt;br&gt;→ see Pipeline page)" vertex="1">
+        <mxCell id="7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#ffe6cc;strokeColor=#d79b00;dashed=0;verticalAlign=middle;align=center;arcSize=14;" value="&lt;b&gt;platform-gitops&lt;/b&gt;&lt;br&gt;(Git source for Argo CD)" vertex="1">
           <mxGeometry height="80" width="169" x="-67" y="464" as="geometry" />
         </mxCell>
         <mxCell id="8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=13;fillColor=#f7faff;strokeColor=#6c8ebf;dashed=1;" value="GCP Project: dotted-axle-495612-f4   ·   Region: europe-west1" vertex="1">
@@ -34,9 +34,6 @@
         <mxCell id="11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="GCS&#xa;• Terraform state&#xa;• PG / barman backups" vertex="1">
           <mxGeometry height="60" width="177" x="788" y="32" as="geometry" />
         </mxCell>
-        <mxCell id="12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="Workload Identity&#xa;Federation (OIDC)&#xa;IAM Service Accounts" vertex="1">
-          <mxGeometry height="60" width="180" x="1041" y="28" as="geometry" />
-        </mxCell>
         <mxCell id="13" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=12;fillColor=#eef4ff;strokeColor=#6c8ebf;dashed=1;" value="VPC" vertex="1">
           <mxGeometry height="1016" width="1458" x="233" y="135" as="geometry" />
         </mxCell>
@@ -46,7 +43,7 @@
         <mxCell id="15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=12;fillColor=#fffbe6;strokeColor=#d6b656;dashed=1;" value="Platform components&lt;div&gt;(cluster-scope / platform namespaces)&lt;/div&gt;" vertex="1">
           <mxGeometry height="324" width="1221" x="356" y="264" as="geometry" />
         </mxCell>
-        <mxCell id="16" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Argo CD&lt;/b&gt;&lt;br&gt;App-of-Apps&lt;br&gt;+ ApplicationSets" vertex="1">
+        <mxCell id="16" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Argo CD&lt;/b&gt;&lt;br&gt;App-of-Apps&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;i&gt;(self-managing after bootstrap)&lt;/i&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="91" width="140" x="382" y="480" as="geometry" />
         </mxCell>
         <mxCell id="17" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Crossplane&lt;/b&gt;&lt;br&gt;Providers: GCP, K8s, Helm&lt;br&gt;XRDs / Compositions" vertex="1">
@@ -61,17 +58,17 @@
         <mxCell id="20" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;cert-manager&lt;/b&gt;&lt;br&gt;ClusterIssuer&lt;br&gt;Let&#39;s Encrypt DNS-01" vertex="1">
           <mxGeometry height="60" width="127" x="1401.25" y="306" as="geometry" />
         </mxCell>
-        <mxCell id="21" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Traefik&lt;/b&gt;&lt;br&gt;LoadBalancer Service · TLS termination&lt;br&gt;&lt;i&gt;exposes:&lt;/i&gt;&lt;br&gt;• *.fhuebung.lol (tenants, path /api → backend)&lt;br&gt;• argocd.fhuebung.lol  · grafana.fhuebung.lol" vertex="1">
-          <mxGeometry height="133" width="225" x="378" y="329" as="geometry" />
+        <mxCell id="21" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Traefik&lt;/b&gt;&lt;br&gt;LoadBalancer Service · TLS termination&lt;br&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;i style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;exposes:&lt;/i&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• *.fhuebung.lol (tenants, path /api → backend)&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;• argocd.fhuebung.lol  · grafana.fhuebung.lol&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;+ per-tenant BasicAuth via Middleware CR&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="133" width="233" x="372" y="331" as="geometry" />
         </mxCell>
         <mxCell id="22" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="CloudNativePG&#xa;operator" vertex="1">
-          <mxGeometry height="60" width="100" x="1295.5" y="506" as="geometry" />
+          <mxGeometry height="60" width="100" x="1292.5" y="506" as="geometry" />
         </mxCell>
         <mxCell id="23" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;verticalAlign=middle;align=center;" value="kube-prometheus-stack&lt;br&gt;Prometheus · Grafana ·&amp;nbsp;Alertmanager&amp;nbsp;" vertex="1">
           <mxGeometry height="60" width="140" x="819" y="490" as="geometry" />
         </mxCell>
-        <mxCell id="24" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;verticalAlign=middle;align=center;" value="Workload Identity bindings&#xa;K8s SAs ↔ GCP SAs&#xa;(no JSON keys)" vertex="1">
-          <mxGeometry height="60" width="129" x="1143" y="506" as="geometry" />
+        <mxCell id="24" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;verticalAlign=middle;align=center;" value="&lt;b&gt;GKE Workload Identity&lt;/b&gt;&lt;div&gt;KSA ↔ GSA bindings (used by ESO, ExternalDNS, cert-manager, CNPG, Crossplane)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="95" width="167" x="1014" y="327" as="geometry" />
         </mxCell>
         <mxCell id="25" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=12;fillColor=#ecf6e8;strokeColor=#82b366;dashed=1;" value="Tenant Namespace   tenant-[X] ·     ×N  +  staging" vertex="1">
           <mxGeometry height="431" width="1240" x="355" y="628" as="geometry" />
@@ -85,20 +82,20 @@
         <mxCell id="28" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#d5e8d4;strokeColor=#82b366;dashed=0;verticalAlign=middle;align=center;" value="ServiceAccount&#xa;(tenant identity)" vertex="1">
           <mxGeometry height="50" width="110" x="861" y="701" as="geometry" />
         </mxCell>
-        <mxCell id="29" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#d5e8d4;strokeColor=#82b366;dashed=0;verticalAlign=middle;align=center;" value="ExternalSecrets&lt;div&gt;GHCR pull-secret • App login creds (plaintext from GSM, hashed at backend startup)&lt;/div&gt;" vertex="1">
-          <mxGeometry height="76" width="210" x="609" y="666" as="geometry" />
+        <mxCell id="29" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#d5e8d4;strokeColor=#82b366;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;ExternalSecrets&lt;/b&gt;&lt;br&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;GHCR pull-secret · &lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;BasicAuth htpasswd&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;(htpasswd-format, generated by Crossplane&lt;/span&gt;)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="48" width="226" x="602" y="647" as="geometry" />
         </mxCell>
-        <mxCell id="30" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#d5e8d4;strokeColor=#82b366;dashed=0;verticalAlign=middle;align=center;" value="Ingress&lt;br&gt;host: [tenant].fhuebung.lol&lt;br&gt;TLS: *.fhuebung.lol" vertex="1">
-          <mxGeometry height="60" width="200" x="397" y="786" as="geometry" />
+        <mxCell id="30" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#d5e8d4;strokeColor=#82b366;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Ingress&lt;/b&gt;&lt;br&gt;host: [tenant].fhuebung.lol&lt;div&gt;TLS: *.fhuebung.lol&lt;/div&gt;&lt;div&gt;middleware: tenant-X-basicauth&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="200" x="397" y="814" as="geometry" />
         </mxCell>
         <mxCell id="31" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#d5e8d4;strokeColor=#82b366;dashed=0;verticalAlign=middle;align=center;" value="Frontend&#xa;Deployment + Service&#xa;nginx :80" vertex="1">
-          <mxGeometry height="60" width="200" x="725" y="838" as="geometry" />
+          <mxGeometry height="60" width="200" x="725" y="864" as="geometry" />
         </mxCell>
         <mxCell id="32" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#d5e8d4;strokeColor=#82b366;dashed=0;verticalAlign=middle;align=center;" value="Backend&#xa;Deployment + Service&#xa;:3000   GET /healthz" vertex="1">
-          <mxGeometry height="60" width="200" x="939" y="838" as="geometry" />
+          <mxGeometry height="60" width="200" x="939" y="864" as="geometry" />
         </mxCell>
         <mxCell id="33" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#d5e8d4;strokeColor=#82b366;dashed=0;verticalAlign=middle;align=center;" value="CloudNativePG Cluster&#xa;+ Service + Secret&#xa;(per-tenant DB)" vertex="1">
-          <mxGeometry height="60" width="173" x="1259" y="840" as="geometry" />
+          <mxGeometry height="60" width="173" x="1256" y="864" as="geometry" />
         </mxCell>
         <mxCell id="34" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffffff;strokeColor=#82b366;dashed=1;verticalAlign=middle;align=center;" value="Provisioned by a Crossplane Composition from a Tenant claim in platform-gitops/tenants/   ·   App workloads (Frontend, Backend, Ingress) deployed via &lt;b&gt;Helm Release&lt;/b&gt; rendered by Crossplane (provider-helm)" vertex="1">
           <mxGeometry height="29" width="1120" x="397" y="986" as="geometry" />
@@ -164,10 +161,11 @@
           <mxGeometry relative="1" x="0.9612" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
+              <mxPoint x="1302" y="864" />
               <mxPoint x="1302" y="609" />
-              <mxPoint x="1120" y="609" />
-              <mxPoint x="1120" y="414" />
-              <mxPoint x="832" y="414" />
+              <mxPoint x="1193" y="609" />
+              <mxPoint x="1193" y="464" />
+              <mxPoint x="832" y="464" />
             </Array>
             <mxPoint x="799" y="87" as="targetPoint" />
           </mxGeometry>
@@ -176,8 +174,8 @@
           <mxGeometry relative="1" x="-0.4513" y="11" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
-              <mxPoint x="1896" y="960" />
-              <mxPoint x="825" y="960" />
+              <mxPoint x="1895" y="971" />
+              <mxPoint x="825" y="971" />
             </Array>
             <mxPoint x="883" y="909" as="targetPoint" />
           </mxGeometry>
@@ -186,8 +184,8 @@
           <mxGeometry relative="1" x="-0.4241" y="-15" as="geometry">
             <mxPoint as="offset" />
             <Array as="points">
-              <mxPoint x="1847" y="937" />
-              <mxPoint x="1039" y="937" />
+              <mxPoint x="1847" y="950" />
+              <mxPoint x="1039" y="950" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -196,7 +194,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="51" edge="1" parent="1" source="17" style="endArrow=classic;html=1;rounded=0;strokeColor=#0066cc;fontSize=10;exitX=0.5;exitY=1;exitDx=0;exitDy=0;labelBackgroundColor=none;entryX=0.907;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" target="25" value="provisions infra&lt;div&gt;+&lt;br&gt;Helm Release&lt;div&gt;(provider-helm)&lt;/div&gt;&lt;/div&gt;">
+        <mxCell id="51" edge="1" parent="1" source="17" style="endArrow=classic;html=1;rounded=0;strokeColor=#0066cc;fontSize=10;exitX=0.5;exitY=1;exitDx=0;exitDy=0;labelBackgroundColor=none;entryX=0.895;entryY=0.012;entryDx=0;entryDy=0;entryPerimeter=0;" target="25" value="provisions infra&lt;div&gt;+&lt;br&gt;Helm Release&lt;div&gt;(provider-helm)&lt;/div&gt;&lt;/div&gt;">
           <mxGeometry relative="1" x="-0.1556" y="-4" as="geometry">
             <mxPoint as="offset" />
             <mxPoint x="1475" y="630" as="targetPoint" />
@@ -206,13 +204,6 @@
           <mxGeometry relative="1" x="-0.6828" y="-1" as="geometry">
             <mxPoint as="offset" />
             <mxPoint x="1412" y="846" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="53" edge="1" parent="1" source="24" style="endArrow=classic;html=1;rounded=0;strokeColor=#888888;dashed=1;fontSize=10;entryX=0.75;entryY=1;entryDx=0;entryDy=0;exitX=0.25;exitY=0;exitDx=0;exitDy=0;" target="12" value="trust relation">
-          <mxGeometry relative="1" x="0.9091" y="1" as="geometry">
-            <mxPoint as="offset" />
-            <mxPoint x="1179.8000000000002" y="478" as="sourcePoint" />
-            <mxPoint x="1150" y="151.48" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="54" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fillColor=#fafafa;strokeColor=#cccccc;rounded=1;" value="Legend     ▢ blue = GCP managed services      ▢ yellow = platform components in cluster      ▢ green = per-tenant resources      ▢ orange = Git / OCI sources      ▢ grey = external (Internet, registrar, ACME)      → red = user/data path     → blue = control / sync     ⤍ dashed = pulls / async" vertex="1">
@@ -233,13 +224,13 @@
         <mxCell id="edge-api-100" edge="1" parent="1" source="30" style="endArrow=classic;html=1;rounded=0;strokeColor=#b85450;fontSize=10;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" target="32" value="/api">
           <mxGeometry relative="1" x="0.6" as="geometry">
             <Array as="points">
-              <mxPoint x="1040" y="801" />
+              <mxPoint x="1040" y="829" />
             </Array>
             <mxPoint x="606" y="760" as="sourcePoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="pvc-tenant-101" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#d5e8d4;strokeColor=#82b366;dashed=1;verticalAlign=middle;align=center;" value="&lt;b&gt;PVC&lt;/b&gt;:&lt;div&gt;db-data&lt;/div&gt;" vertex="1">
-          <mxGeometry height="40" width="67" x="1499" y="850" as="geometry" />
+          <mxGeometry height="40" width="67" x="1503" y="874" as="geometry" />
         </mxCell>
         <mxCell id="edge-db-pvc-102" edge="1" parent="1" source="33" style="endArrow=classic;html=1;rounded=0;strokeColor=#888888;dashed=1;fontSize=10;edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;labelBackgroundColor=none;" target="pvc-tenant-101" value="persists">
           <mxGeometry relative="1" x="0.0289" y="14" as="geometry">
@@ -254,9 +245,10 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="edge-scrape-105" edge="1" parent="1" source="23" style="endArrow=classic;html=1;rounded=0;strokeColor=#888888;dashed=1;fontSize=10;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.436;entryY=0.001;entryDx=0;entryDy=0;entryPerimeter=0;" target="25" value="scrapes metrics">
+        <mxCell id="edge-scrape-105" edge="1" parent="1" source="23" style="endArrow=classic;html=1;rounded=0;strokeColor=#888888;dashed=1;fontSize=10;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.43;entryY=0.004;entryDx=0;entryDy=0;entryPerimeter=0;" target="25" value="scrapes metrics">
           <mxGeometry relative="1" x="0.3763" y="1" as="geometry">
             <mxPoint as="offset" />
+            <mxPoint x="892" y="639" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="edge-chart-pull-200" edge="1" parent="1" source="6" style="endArrow=classic;html=1;rounded=0;strokeColor=#888888;dashed=1;fontSize=10;edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.761;entryY=0.956;entryDx=0;entryDy=0;entryPerimeter=0;labelBackgroundColor=none;" target="17" value="helm chart pull&lt;div&gt;(OCI)&lt;/div&gt;">
@@ -268,7 +260,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="mJAANpEc3tll3X-F0AEd-56" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="Google Loadbalancer" vertex="1">
-          <mxGeometry height="60" width="200" x="284" y="32" as="geometry" />
+          <mxGeometry height="60" width="200" x="280" y="32" as="geometry" />
         </mxCell>
         <mxCell id="mJAANpEc3tll3X-F0AEd-57" edge="1" parent="1" source="mJAANpEc3tll3X-F0AEd-56" style="endArrow=classic;html=1;rounded=0;strokeColor=#b85450;fontSize=10;entryX=0.25;entryY=0;entryDx=0;entryDy=0;exitX=0.75;exitY=1;exitDx=0;exitDy=0;" target="21" value="">
           <mxGeometry relative="1" x="-0.0488" y="17" as="geometry">
@@ -285,8 +277,8 @@
         <mxCell id="UQByxWkfWb7J_uxHDu2G-54" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fontStyle=1;fontSize=17;" value="User" vertex="1">
           <mxGeometry height="60" width="30" x="5.5" y="45" as="geometry" />
         </mxCell>
-        <mxCell id="7orDh3TsndOga73lpUSm-54" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffe6cc;strokeColor=#d79b00;dashed=0;verticalAlign=middle;align=left;arcSize=0;" value="&lt;font&gt;&lt;i&gt;App version config&lt;/i&gt;&lt;br&gt;values/app-version.yaml&lt;br&gt;→ image tag for all tenants&lt;br&gt;tenants/staging.yaml&lt;br&gt;→ optional imageTag override&lt;/font&gt;" vertex="1">
-          <mxGeometry height="80" width="138.5" x="-51.75" y="270" as="geometry" />
+        <mxCell id="7orDh3TsndOga73lpUSm-54" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#ffe6cc;strokeColor=#d79b00;dashed=0;verticalAlign=middle;align=left;arcSize=0;" value="&lt;font&gt;&lt;i&gt;App version config&lt;/i&gt;&lt;br&gt;&lt;b&gt;values/app-version.yaml:&lt;/b&gt;&lt;br&gt;• chart.version (helm chart)&lt;br&gt;• images.backend&lt;br&gt;• images.frontend&lt;br&gt;&lt;b&gt;tenants/staging.yaml:&lt;/b&gt;&lt;br&gt;• imageTagOverride.backend&lt;br&gt;• imageTagOverride.frontend&lt;/font&gt;" vertex="1">
+          <mxGeometry height="112" width="138.5" x="-51.75" y="270" as="geometry" />
         </mxCell>
         <mxCell id="7orDh3TsndOga73lpUSm-56" edge="1" parent="1" source="7orDh3TsndOga73lpUSm-54" style="endArrow=classic;html=1;rounded=0;strokeColor=light-dark(#0066CC,#787878);dashed=1;fontSize=10;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="7" value="">
           <mxGeometry relative="1" x="-0.6899" y="2" as="geometry">
@@ -300,7 +292,7 @@
             <mxPoint x="-1" y="-51" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="7orDh3TsndOga73lpUSm-61" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#ffe6cc;strokeColor=#d79b00;dashed=0;verticalAlign=middle;align=left;arcSize=14;" value="&lt;div style=&quot;text-align: center;&quot;&gt;&lt;b style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;GitHub Actions&lt;/b&gt;&lt;/div&gt;&lt;div style=&quot;text-align: center;&quot;&gt;&lt;b style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/b&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;- terraform apply (platform-iac)&lt;/div&gt;&lt;div&gt;- image build &amp;amp; push (app repos)&lt;/div&gt;&lt;div style=&quot;&quot;&gt;- PR validation (all repos)&lt;/div&gt;" vertex="1">
+        <mxCell id="7orDh3TsndOga73lpUSm-61" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#ffe6cc;strokeColor=#d79b00;dashed=0;verticalAlign=middle;align=left;arcSize=14;" value="&lt;div style=&quot;text-align: center;&quot;&gt;&lt;b style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;GitHub Actions&lt;/b&gt;&lt;/div&gt;&lt;div style=&quot;text-align: center;&quot;&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;- image build &amp;amp; push (app repos)&lt;/div&gt;&lt;div style=&quot;&quot;&gt;- PR validation (all repos)&lt;/div&gt;" vertex="1">
           <mxGeometry height="80" width="169" x="-67" y="684" as="geometry" />
         </mxCell>
         <mxCell id="7orDh3TsndOga73lpUSm-62" edge="1" parent="1" source="7orDh3TsndOga73lpUSm-61" style="endArrow=classic;html=1;rounded=0;strokeColor=#888888;dashed=1;fontSize=10;edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" value="">
@@ -319,29 +311,28 @@
             <mxPoint x="-506" y="-412" as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="7orDh3TsndOga73lpUSm-64" edge="1" parent="1" source="7orDh3TsndOga73lpUSm-61" style="endArrow=classic;html=1;rounded=0;strokeColor=light-dark(#0066CC,#787878);dashed=1;fontSize=10;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;edgeStyle=orthogonalEdgeStyle;" target="12" value="">
-          <mxGeometry relative="1" x="-0.6899" y="2" as="geometry">
-            <mxPoint as="offset" />
-            <Array as="points">
-              <mxPoint x="-67" y="723" />
-              <mxPoint x="-164" y="723" />
-              <mxPoint x="-164" y="5" />
-              <mxPoint x="1131" y="5" />
-            </Array>
-            <mxPoint x="-132" y="575" as="sourcePoint" />
-            <mxPoint x="-131" y="685" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="7orDh3TsndOga73lpUSm-66" connectable="0" parent="7orDh3TsndOga73lpUSm-64" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="auth via OIDC" vertex="1">
-          <mxGeometry relative="1" x="-0.5002" y="-1" as="geometry">
-            <mxPoint x="49" y="425" as="offset" />
-          </mxGeometry>
-        </mxCell>
         <mxCell id="7orDh3TsndOga73lpUSm-67" edge="1" parent="1" source="7orDh3TsndOga73lpUSm-61" style="endArrow=classic;html=1;rounded=0;strokeColor=#888888;dashed=1;fontSize=10;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" target="7" value="PR validation">
           <mxGeometry relative="1" x="-0.6902" y="2" as="geometry">
             <mxPoint as="offset" />
             <mxPoint x="711" y="518" as="sourcePoint" />
             <mxPoint x="710" y="762" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2ETG5CaNyDGlC0_aD3q5-54" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#d5e8d4;strokeColor=#82b366;dashed=0;verticalAlign=middle;align=center;" value="Traefik Middleware&lt;br/&gt;kind: Middleware (BasicAuth)&lt;br/&gt;uses Secret from ExternalSecrets" vertex="1">
+          <mxGeometry height="48" width="202" x="614" y="748" as="geometry" />
+        </mxCell>
+        <mxCell id="2ETG5CaNyDGlC0_aD3q5-55" edge="1" parent="1" source="29" style="endArrow=classic;html=1;rounded=0;strokeColor=#0066cc;fontSize=10;entryX=0.5;entryY=0;entryDx=0;entryDy=0;labelBackgroundColor=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="2ETG5CaNyDGlC0_aD3q5-54" value="&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;materialises htpasswd Secret&lt;/span&gt;&lt;/div&gt;">
+          <mxGeometry relative="1" x="-0.0566" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="443" y="547" as="sourcePoint" />
+            <mxPoint x="723" y="546" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2ETG5CaNyDGlC0_aD3q5-56" edge="1" parent="1" source="30" style="endArrow=classic;html=1;rounded=0;strokeColor=#888888;dashed=1;fontSize=7;entryX=0;entryY=0.25;entryDx=0;entryDy=0;exitX=0.817;exitY=0.016;exitDx=0;exitDy=0;exitPerimeter=0;edgeStyle=orthogonalEdgeStyle;labelBackgroundColor=none;" target="2ETG5CaNyDGlC0_aD3q5-54" value="references&lt;div&gt;via&lt;/div&gt;&lt;div&gt;annotation&lt;/div&gt;">
+          <mxGeometry relative="1" x="0.5207" y="-20" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="798" y="724" as="sourcePoint" />
+            <mxPoint x="789" y="949" as="targetPoint" />
           </mxGeometry>
         </mxCell>
       </root>

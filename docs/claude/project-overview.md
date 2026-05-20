@@ -51,11 +51,20 @@ These rules are non-negotiable and must be reflected in every decision:
   with Google Secret Manager.
 - **No direct commits to `main`.** All changes go through pull requests.
   See [`CONTRIBUTING.md`](../../CONTRIBUTING.md) for the full workflow.
-- **No manual click after IaC kickoff.** Once `terraform apply` runs, the
-  platform deploys end-to-end without human intervention. Documented exceptions
-  for unavoidable glue points are permitted but must stay minimal.
-- **GitHub Actions OIDC → GCP Workload Identity Federation.** No long-lived
-  service account JSON keys in GitHub secrets.
+- **No manual click after `bootstrap.sh` kickoff.** Once a team member runs
+  `bootstrap/bootstrap.sh` locally, the script provisions the entire platform
+  end-to-end (state bucket, GKE cluster, IAM, Argo CD bootstrap) and then
+  Argo CD reconciles everything else from `platform-gitops`. The single
+  manual invocation of the script is the only documented exception per the
+  assignment.
+- **No long-lived GCP service account JSON keys** anywhere — not on team
+  members' machines, not in CI, not in cluster Secrets. Terraform runs
+  locally as the executing team member, authenticated via `gcloud auth
+  login`. In-cluster workloads use GKE Workload Identity. CI workloads
+  that need GCP access would use GitHub Actions OIDC → Workload Identity
+  Federation, but **no such CI workload currently exists** — GitHub
+  Actions only runs PR validation and GHCR image/chart pushes (the latter
+  authenticated via the built-in `GITHUB_TOKEN`).
 - **Conventional Commits + squash merge.** No merge commits. Linear history.
 - **English only.** All code, commits, PRs, issues, documentation, and code
   comments are written in English. No mixed-language artefacts.
@@ -72,7 +81,8 @@ overengineering.
 
 **Day 1 — Foundation (Bootstrap).** Provisioning the GKE cluster, VPC, Workload
 Identity, and the GitOps tool. Result: the platform exists and is ready to host
-tenants. Implemented via Terraform in `platform-iac`.
+tenants. Implemented via Terraform in `platform-iac`, executed locally through
+`bootstrap/bootstrap.sh`.
 
 **Day 2 — Service Catalog (Application).** On-the-fly provisioning of
 tenant-specific application instances. A developer triggers a deployment via
