@@ -68,8 +68,8 @@ one root Argo CD `Application` pointing at `platform-gitops`.
 **Day 2** starts the moment that root Application syncs for the first
 time. From there on, Argo CD reconciles everything else (ESO,
 ExternalDNS, cert-manager, Crossplane and its providers, Traefik,
-kube-prometheus-stack, all XRDs, Compositions, ApplicationSets, and
-tenant claims) from `platform-gitops`. The platform self-manages from
+kube-prometheus-stack, all XRDs, Compositions, and tenant claims) from
+`platform-gitops`. The platform self-manages from
 this point: changes to platform components or tenant configuration
 go through pull requests against `platform-gitops`, never through
 direct cluster interaction.
@@ -136,7 +136,6 @@ records) and by cert-manager (ACME DNS-01 TXT records).
 **Argo CD** — the GitOps controller. Watches `platform-gitops` and
 reconciles its contents into the cluster continuously. Follows the
 App-of-Apps pattern: a root Application bootstraps the others.
-ApplicationSets generate additional Applications when needed.
 Argo CD's web UI is exposed publicly at `argocd.fhuebung.lol`,
 protected by Argo CD's built-in authentication (initial admin
 password generated at install time, stored in GSM and rotated after
