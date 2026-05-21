@@ -30,6 +30,14 @@ a clean, auditable, and consistent project history.
 4. **Small, focused PRs** – easier to review, less risk of conflicts.
 5. **No plaintext secrets** – ever. Period.
 
+> **Enforcement note.** These rules apply to **every** repository, including
+> `app-frontend`. The organization is on the GitHub Free plan, where branch
+> protection / rulesets are only available on public repositories; on the
+> private `app-frontend` they cannot be enabled. The branch-and-PR workflow
+> there is therefore enforced **by convention, not technically** — always
+> create a branch, open a PR, and obtain one approving review before merging
+> into `app-frontend`'s `main`, exactly as for every other repository.
+
 ---
 
 ## Branching
