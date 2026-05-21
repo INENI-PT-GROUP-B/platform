@@ -35,10 +35,28 @@ feature parity, and reasonable pricing.
 
 Chosen over Pulumi for ecosystem maturity around GCP and the broader pool of
 existing modules (e.g. `terraform-google-modules`). State stored in a GCS
-bucket (versioned, with state locking).
+bucket `gs://<project>-tfstate`, versioned, with state locking.
 
-Authentication from CI: **GitHub Actions OIDC → GCP Workload Identity
-Federation**. No long-lived service account JSON keys.
+Terraform runs **locally via the `bootstrap/bootstrap.sh` script** executed
+by a team member, not from CI. The script is idempotent and committed to
+`platform-iac`; it handles, in order, preflight checks, GCP API enablement,
+state-bucket creation (resolving the chicken-and-egg of needing a GCS bucket
+before `terraform init`), `terraform apply`, kubeconfig retrieval, and the
+Argo CD bootstrap (Helm install + root App-of-Apps). After the script
+completes, Argo CD takes over and the platform self-manages from
+`platform-gitops`.
+
+This is the one documented "manual step" exception per the assignment:
+the bootstrap action is fully reproducible from code, and a re-run of the
+script after a teardown rebuilds the platform end-to-end without manual
+clicks beyond invoking the script itself.
+
+No CI-based Terraform pipeline exists; therefore no GitHub Actions OIDC ↔
+GCP trust binding for Terraform. GitHub Actions OIDC is **not** in the
+Terraform path. GitHub Actions still runs PR validation, image build and
+push, and Helm chart push — but the GHCR pushes authenticate using GitHub's
+own built-in `GITHUB_TOKEN`, never GCP IAM. There are no long-lived GCP
+service account JSON keys anywhere in the project.
 
 ## GitOps
 
@@ -91,6 +109,27 @@ The Kubernetes `Service` backing Traefik is of type `LoadBalancer`, which
 makes GKE provision a Google Cloud L4 load balancer with a public IP.
 TLS is terminated in Traefik, not in the load balancer.
 
+### Per-tenant BasicAuth
+
+Tenant URLs are protected by a **Traefik BasicAuth middleware** at the ingress
+layer rather than by application-level authentication. This keeps the
+application code authentication-free and makes auth a platform concern.
+
+Per tenant, the Crossplane Composition provisions:
+
+- A random password generated at onboarding time, bcrypt-hashed into the
+  htpasswd format (`<username>:<bcrypt-hash>`). Username is fixed to `admin`;
+  password is per-tenant random.
+- The htpasswd string stored in Google Secret Manager
+  (`tenant-<name>/basicauth-htpasswd`).
+- A Kubernetes `Secret` in the tenant namespace, materialised from GSM by ESO.
+- A Traefik `Middleware` custom resource referencing that Secret.
+- An annotation on the tenant Ingress
+  (`traefik.ingress.kubernetes.io/router.middlewares`) wiring the
+  Middleware into the request path.
+
+The application itself is unaware of this layer.
+
 ## Database
 
 **CloudNativePG** in-cluster.
@@ -120,8 +159,9 @@ The flow:
      Secret next to it)
    - network policies isolating the namespace
    - a Kubernetes `ResourceQuota` and `LimitRange`
-   - `ExternalSecret` resources for the GHCR pull secret and the
-     application login password
+   - an `ExternalSecret` for the GHCR pull secret
+   - the BasicAuth setup (GSM entry, `ExternalSecret`, Traefik `Middleware`)
+     described in § Ingress
    - a Helm `Release` (via `provider-helm`) that pulls the app chart from
      GHCR as an OCI artefact and renders frontend, backend, services, and
      ingress into the namespace
@@ -136,17 +176,28 @@ virtual clusters are out of scope.
 
 ## Application updates and staging
 
-The application image tag every tenant runs is held in a single file in
-`platform-gitops`: `values/app-version.yaml`. The Crossplane Composition
-reads this value when rendering each tenant's Helm release.
+The image tags and chart version every tenant runs are held in a single file
+in `platform-gitops`: `values/app-version.yaml`. The Crossplane Composition
+reads this file when rendering each tenant's Helm release.
 
-- **Rolling out a new version to all tenants**: change the tag in
-  `values/app-version.yaml`, open a PR, merge. Crossplane re-renders every
+Schema:
+
+```yaml
+chart:
+  version: "0.1.0"        # Helm chart version (matches backend release tag)
+images:
+  backend: "v0.1.0"
+  frontend: "v0.1.0"      # may differ from backend tag
+```
+
+- **Rolling out a new version to all tenants**: change the relevant value(s)
+  in `values/app-version.yaml`, open a PR, merge. Crossplane re-renders every
   tenant's Release; provider-helm performs a rolling upgrade per tenant.
-- **Testing on a staging tenant first**: the optional `imageTagOverride`
-  field on a tenant claim beats the central value for that one tenant.
-  The dedicated `staging` tenant uses this to receive new versions before
-  the central rollout.
+- **Testing on a staging tenant first**: an optional `imageTagOverride` block
+  on a tenant claim beats the central values for that one tenant. The
+  dedicated `staging` tenant uses this to receive new versions before the
+  central rollout. Both `backend` and `frontend` can be overridden
+  independently.
 
 ## Container registry
 
@@ -156,43 +207,66 @@ reads this value when rendering each tenant's Helm release.
 - Frontend image: private (`ghcr.io/ineni-pt-group-b/app-frontend`)
 - App Helm chart: public OCI artefact
   (`ghcr.io/ineni-pt-group-b/app-chart`), pulled by Crossplane's
-  `provider-helm` when reconciling a tenant claim
+  `provider-helm` when reconciling a tenant claim. The chart sources live
+  in `app-backend/chart/`; the `app-backend` release workflow handles
+  both the image build and the `helm push` step.
 
 The frontend image pull requires a registry credential, synced into tenant
 namespaces via ESO.
 
 ## The application
 
-A **custom minimal 3-tier application**, generated specifically for this project.
-Lightweight stack to keep per-tenant resource footprint small.
+A **custom 3-tier property-management application**, lightweight by design to
+keep per-tenant resource footprint small. The app is a vehicle for the
+Application Management grading pillar — it is real CRUD on a real database,
+but no extra points are earned for application complexity beyond the
+assignment requirements.
 
-> **Status:** the concrete decisions around the application — final stack
-> (backend framework, frontend framework, database driver), domain model,
-> authentication mechanism, repository status (own repo vs. lecturer fork),
-> and the location of the Helm chart — are tracked in a separate issue.
-> When that issue closes, the relevant sections in this document and in
-> `repository-layout.md` are updated to reflect the final state.
+**Domain.** Each platform tenant represents one landlord. The application
+manages that landlord's rental properties: list, create, edit, delete.
+Single table `properties` (label, address, size, rent, notes, timestamps).
+No multi-user support per tenant, no file uploads, no payment flow.
 
-The following pieces are already settled and act as the **deployment contract**
-that Crossplane targets:
+To avoid term collisions, the renter of an apartment is called **lessee** or
+**occupant** in code and UI — never "tenant", which is reserved for the
+platform-level SaaS tenant (landlord).
+
+**Stack.**
+
+- Backend: Node.js LTS, TypeScript, Fastify, Drizzle ORM + drizzle-kit for
+  migrations (run on startup; idempotent). Multi-stage Alpine Dockerfile.
+- Frontend: Vite + React 18 + TypeScript, React Router, TanStack Query,
+  Tailwind CSS. Multi-stage Alpine Dockerfile with nginx serving the
+  static bundle. Runtime backend URL injection via `/config.js` written by
+  an entrypoint script from env vars.
+
+**Authentication.** Handled at the ingress level via Traefik BasicAuth
+(see § Ingress § Per-tenant BasicAuth). The application has no auth
+endpoints and no auth state.
+
+**Deployment contract** (the surface that Crossplane targets):
 
 - Backend
   - Image: `ghcr.io/ineni-pt-group-b/app-backend:<tag>`
   - Port: `3000`
-  - Health endpoint: `GET /healthz` (returns 200 when ready)
-  - Required env vars: `DATABASE_URL`, `PORT`, `APP_PASSWORD`
+  - Health endpoint: `GET /healthz` (200 once DB and migrations are ready)
+  - Required env vars: `DATABASE_URL`, `PORT`
   - Schema migration: runs automatically on backend start (idempotent)
 - Frontend
   - Image: `ghcr.io/ineni-pt-group-b/app-frontend:<tag>`
   - Port: `80` (nginx serving static files)
-  - Backend URL injection: runtime config via `/config.js` (preferred) or
-    `VITE_API_URL` at build time
-- Auth surface
-  - Single application-level password per tenant
-  - Plaintext stored in GSM, synced to the namespace as `APP_PASSWORD` via ESO
-  - Backend hashes the value on startup (bcrypt, in memory) and verifies
-    login requests against the in-memory hash
-  - Plaintext never leaves GSM and the backend's process memory
+  - Backend URL injection: runtime config via `/config.js` written by an
+    entrypoint script from env vars
+
+**API surface** (all routes pass through the BasicAuth middleware at the
+ingress before reaching the backend):
+
+- `GET /healthz`
+- `GET /api/properties`
+- `POST /api/properties`
+- `GET /api/properties/:id`
+- `PATCH /api/properties/:id`
+- `DELETE /api/properties/:id`
 
 ## Monitoring (bonus task)
 

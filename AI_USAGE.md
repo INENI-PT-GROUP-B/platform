@@ -33,6 +33,42 @@ AI-assisted change.
 
 ---
 
+## 2026-05-21 — Context-file updates after team architecture decisions (PR #34, issue #33)
+
+- **Tool:** Claude (claude.ai web, Opus 4.7) for the document and diagram
+  updates; Claude Code (local, WSL) for content review, branch / commit /
+  PR drafting, and `gh` operations
+- **Scope:** `platform` — the five `docs/claude/` and `docs/architecture/`
+  documents plus `logical_architecture.drawio` (+ PNG export)
+- **What:** updated the markdown context files and the logical diagram to
+  reflect the minor architectural decisions taken within the team:
+  ingress-level Traefik BasicAuth, reduced backend env contract
+  (`DATABASE_URL`, `PORT`), Helm chart in `app-backend/chart/`,
+  `values/app-version.yaml` schema, and local `bootstrap.sh` (no CI
+  Terraform, no GitHub Actions ↔ GCP trust binding).
+- **Verification:** Claude Code checked the changes against #33's acceptance
+  criteria, confirmed the BasicAuth chain, app-version schema and
+  `bootstrap.sh` read consistently across files, flagged and neutralised an
+  out-of-scope DNS claim, and re-confirmed the PNG matches the `.drawio`
+  source.
+- **Outcome:** PR #34 (closes #33), pending review.
+
+## 2026-05-20 — Application brainstorming and decision-making (issues #21 → #32)
+
+- **Tool:** Claude (claude.ai web, Opus 4.7)
+- **Scope:** `platform` — application design decisions; led to closing #21
+  and opening implementation issue #32
+- **What:** brainstormed the application development direction and worked
+  through the key decisions: dropping application-level authentication in
+  favour of ingress-level Traefik BasicAuth, hard-resetting the
+  `app-backend` / `app-frontend` repositories, locating the Helm chart in
+  `app-backend/chart/`, and running Terraform locally via `bootstrap.sh`
+  instead of from CI.
+- **Verification:** decisions cross-checked against the existing deployment
+  contract and the platform architecture before being recorded; captured as
+  a closure comment on #21 and the scope of #32.
+- **Outcome:** decisions recorded — #21 closed, #32 opened for implementation.
+
 ## 2026-05-19 — Architecture refinements from lecturer feedback (PRs #18, #20)
 
 - **Tool:** Claude (claude.ai web, Opus 4.7) for the textual updates
