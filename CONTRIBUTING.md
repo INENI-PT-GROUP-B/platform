@@ -192,6 +192,18 @@ EOF
 )"
 ```
 
+### Body formatting
+
+Issue, PR, and comment bodies are rendered with GitHub Flavored Markdown.
+Unlike `.md` files committed to a repo (which follow CommonMark and reflow
+single newlines into spaces), a single newline **inside a paragraph** is
+rendered as a hard line break (`<br>`). Do **not** hard-wrap prose
+paragraphs in a body: write each paragraph as one logical line and separate
+paragraphs with a blank line. Otherwise the text renders with artificial
+narrow line breaks regardless of viewport width. Lists, checkboxes, code
+fences, and headings are block elements and stay one line per element as
+usual.
+
 ## Issue Linking
 Every PR must reference an issue.
 

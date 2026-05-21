@@ -21,6 +21,10 @@ Quick reference:
   `Infrastructure Bootstrap`, `Application Management`, `Presentation`, `Bonus`
 - when using `gh issue create`, reproduce the same sections in `--body` and
   pass `--label task` explicitly
+- write prose as one line per paragraph (blank line between paragraphs); a
+  body is GitHub Flavored Markdown, so a single newline inside a paragraph
+  becomes a hard `<br>` and the text renders narrow. Lists and code fences
+  are unaffected.
 
 ## Branching
 
