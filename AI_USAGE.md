@@ -33,6 +33,24 @@ AI-assisted change.
 
 ---
 
+## 2026-05-21 — Task-list redesign and repo creation via Claude Code
+
+- **Tool:** Claude Code (local, WSL, Opus 4.7, high effort)
+- **Scope:** `platform` — `tasks/task-list.md`; GitHub org —
+  `app-backend` / `app-frontend` repository creation and settings
+- **What:** redesigned the project task list and clarified the sprint
+  sequencing and dependency plan, incorporating the team's feedback;
+  and tested creating the two application repositories directly through
+  Claude Code (repository creation, squash-only merge settings, and the
+  `main-protection` branch-protection ruleset).
+- **Verification:** repository creation through Claude Code worked well;
+  confirmed — as already seen on the public repos — that branch
+  protection / rulesets cannot be enabled on a private repository on the
+  GitHub Free plan, so `app-frontend` stays convention-only.
+- **Outcome:** task list committed via PR #41 (closes #40); app repos
+  created with an active ruleset on `app-backend` and convention-only
+  protection on `app-frontend`.
+
 ## 2026-05-21 — Context-file updates after team architecture decisions (PR #34, issue #33)
 
 - **Tool:** Claude (claude.ai web, Opus 4.7) for the document and diagram
