@@ -17,6 +17,7 @@ a clean, auditable, and consistent project history.
 - [Creating Issues](#creating-issues)
 - [Issue Linking](#issue-linking)
 - [Reviews & Merging](#reviews--merging)
+- [Tool Versions in CI](#tool-versions-in-ci)
 - [Secrets & Security](#secrets--security)
 - [AI Usage Disclosure](#ai-usage-disclosure)
 
@@ -247,6 +248,15 @@ This ensures:
 - One commit per PR on main
 - PR title becomes the commit message (must be Conventional Commits!)
 - No merge commits
+
+## Tool Versions in CI
+
+CI checks act as gates, so their tooling must be reproducible: an upstream release must never turn a green `main` red without a change in the repository.
+
+- **Pin to an exact version** — linters, formatters, and validators (`tflint`, `yamllint`, `markdownlint-cli2`, `terraform`, `kubeconform`, `helm`) and language/runtime toolchains (Terraform, Node). Provider versions are pinned via the committed `.terraform.lock.hcl`.
+- **Pin GitHub Actions to a major-version tag** (e.g. `actions/checkout@v6`). Full commit-SHA pinning is intentionally not required at this scale.
+- **Do not pin tools whose value is freshness** — security scanners and vulnerability databases stay floating so new signatures are picked up.
+- **Upgrade via an explicit, reviewable PR.** There is no auto-update bot (Renovate/Dependabot); revisit if version churn becomes painful.
 
 ## Secrets & Security
 
