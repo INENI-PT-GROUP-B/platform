@@ -96,6 +96,15 @@ Every commit references an issue (in body or via PR).
 - Repo-specific linters as configured (e.g. `tflint`, `yamllint`,
   `kubeconform`, `helm lint`)
 
+## Tool versions in CI
+
+CI gates must be reproducible — pin tool versions so an upstream release cannot turn `main` red without a repo change. Canonical rule: [`CONTRIBUTING.md` § Tool Versions in CI](../../CONTRIBUTING.md#tool-versions-in-ci).
+
+- Pin linters/formatters/validators (`tflint`, `yamllint`, `markdownlint-cli2`, `terraform`, `kubeconform`, `helm`) and runtime toolchains to an exact version; providers via `.terraform.lock.hcl`.
+- Pin GitHub Actions to a major-version tag (`@v6`); no full-SHA requirement.
+- Do not pin freshness-driven tools (security scanners).
+- Upgrades go through an explicit PR; no Renovate/Dependabot.
+
 ## What not to commit
 
 Never:
