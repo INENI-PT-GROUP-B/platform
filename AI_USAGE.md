@@ -33,6 +33,27 @@ AI-assisted change.
 
 ---
 
+## 2026-05-24 — Reusable lint workflow and linter version pinning
+
+- **Tool:** Claude Code (local, Windows, Opus 4.7)
+- **Scope:** `.github` — `.github/workflows/lint-reusable.yml`, `README.md`;
+  `app-backend` / `app-frontend` — `.github/workflows/lint.yml`
+- **What:** addressed the review on `app-backend`#3 / `app-frontend`#3 by
+  pinning the `yamllint` and `markdownlint-cli2` versions, then extracted the
+  duplicated lint setup into a reusable `lint-reusable.yml`
+  (`on: workflow_call`) in `.github`, mirroring the existing commitlint /
+  pr-title reusables, and documented in the repo README that each consumer
+  supplies its own `.yamllint.yml` / `.markdownlint.jsonc` via the caller
+  checkout.
+- **Verification:** confirmed both pinned versions exist and are current on
+  PyPI / npm before pinning; checked the org `main-protection` ruleset
+  enforces no named status checks, so the reusable-call check rename is safe;
+  cross-checked the caller-checkout config mechanism against the working
+  commitlint reusable; CI green on every PR.
+- **Outcome:** pinning merged (`app-backend`#3, `app-frontend`#3); reusable
+  workflow open as `.github`#9 (refs `.github`#8), consumer migrations to
+  follow once it merges.
+
 ## 2026-05-21 — Task-list redesign and repo creation via Claude Code
 
 - **Tool:** Claude Code (local, WSL, Opus 4.7, high effort)
