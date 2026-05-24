@@ -33,6 +33,27 @@ AI-assisted change.
 
 ---
 
+## 2026-05-24 — Terraform IAM module (S1-08)
+
+- **Tool:** Claude Code (local, macOS, Opus 4.7)
+- **Scope:** `platform-iac` — new `terraform/iam/` module (`main.tf`,
+  `variables.tf`, `outputs.tf`, `versions.tf`), `terraform/main.tf`,
+  `terraform/outputs.tf`, `README.md`
+- **What:** drafted the Terraform IAM module from the task brief — four
+  Google Service Accounts (ExternalDNS, cert-manager, ESO, Crossplane
+  provider-gcp), each bound to its in-cluster KSA via Workload Identity,
+  plus the two project-level Secret Manager roles ESO and Crossplane need.
+  Module is wired into the root with the GSA emails re-exported for
+  S1-09 / S2-05 / S2-10. Layout mirrors `terraform/network/` and
+  `terraform/cluster/`.
+- **Verification:** review pass against the project conventions caught an
+  over-permissioned ESO role (`secretmanager.viewer`) and two unused
+  outputs; both removed in a follow-up commit. The task brief listed
+  `roles/secretmanager.secretVersionAccessor`, which is not a real GCP
+  role — replaced with the canonical `roles/secretmanager.secretAccessor`
+  and noted in the PR. All `terraform-lint.yml` checks green.
+- **Outcome:** open as `platform-iac`#24, closes #23, pending review.
+
 ## 2026-05-24 — Reusable lint workflow and linter version pinning
 
 - **Tool:** Claude Code (local, Windows, Opus 4.7)
