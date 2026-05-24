@@ -170,9 +170,10 @@ image (`ghcr.io/ineni-pt-group-b/app-frontend`).
 Contents:
 - Application source code (Vite + React 18 + TypeScript, React Router,
   TanStack Query, Tailwind CSS)
-- `Dockerfile` — multi-stage build with nginx runtime on port 80 and an
-  entrypoint script that writes `/usr/share/nginx/html/config.js` from
-  env vars at container startup
+- `Dockerfile` — multi-stage build with nginx runtime on port 80 serving the
+  static bundle. `/config.js` is delivered by the Helm chart as a ConfigMap
+  (`window.APP_CONFIG`, `apiBaseUrl` always `/api`); the image serves the file
+  statically and must not also write it
 - `.github/workflows/ci.yaml` — lint, build on PRs
 - `.github/workflows/release.yaml` — on release tag, builds and pushes the
   frontend image only (no chart in this repo)
