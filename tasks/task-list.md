@@ -82,7 +82,7 @@
 | # | Task | Assignee | Pillar | Depends on |
 |---|---|---|---|---|
 | S1-13 | Check and add AI_USAGE entries (log architecture session, bootstrap script generation, docs drafts) | **rl** | P1 | — |
-| S1-14 | Add `CODEOWNERS` to all 6 repos (platform, .github, platform-iac, platform-gitops, app-backend, app-frontend) | **mr** | P1 | — |
+| S1-14 | Add `CODEOWNERS` to all 6 repos (platform, .github, platform-iac, platform-gitops, app-backend, app-frontend). app-backend / app-frontend done via #49; remaining four via #61. | **mr** | P1 | — |
 | S1-15 | Write `platform/docs/cost-planning/` — initial capacity estimate (node sizing, cost per month, dated snapshot) | **pp** | P1 | — |
 
 
