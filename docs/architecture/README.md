@@ -263,8 +263,9 @@ backend. BasicAuth middleware annotation as described above.
 
 **Frontend** — Deployment serving a single-page application via
 nginx on port 80. Delivers the static assets (HTML/JS/CSS). The
-backend URL is injected at runtime through `/config.js`, written
-by an entrypoint script from env vars at container startup.
+backend URL is injected at runtime through `/config.js`, delivered
+by the Helm chart as a ConfigMap (`apiBaseUrl` always `/api`); the
+image serves the file statically and does not write it.
 
 **Backend** — Deployment exposing the REST API on port 3000. Health
 endpoint at `GET /healthz`. On startup, connects to the database
