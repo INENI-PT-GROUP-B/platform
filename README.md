@@ -21,6 +21,8 @@ GCP cost estimate and credit request basis: [docs/cost-planning](./docs/cost-pla
 
 Estimate date: 2026-05-03. Files are static snapshots, future updates land alongside as new dated files.
 
+At project end, the actual spend will be compared against the granted budget and a short lessons-learned note will be added alongside.
+
 ## Local Setup & AI Context
 
 This project actively uses generative AI (primarily Claude) for
