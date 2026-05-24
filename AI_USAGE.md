@@ -33,6 +33,30 @@ AI-assisted change.
 
 ---
 
+## 2026-05-24 — app-frontend SPA (skeleton + property CRUD screens)
+
+- **Tool:** Claude (claude.ai web, Opus 4.7) for planning and brainstorming;
+  Claude Code (local, WSL, Opus 4.7) in plan mode at high effort for the
+  implementation, a consistency review, and branch / commit / PR drafting
+- **Scope:** `app-frontend` — the SPA built across two PRs: skeleton (#7 — Vite
+  + React 18 + TypeScript, Tailwind, React Router, TanStack Query, the
+  `/config.js` runtime-config loader, nginx Dockerfile, CI) and the property
+  CRUD screens (#9 — list, shared create/edit form, confirm dialog, API client +
+  TanStack Query hooks against `/api/properties`)
+- **What:** the app-frontend was developed collaboratively — Claude drafted the
+  implementation against the agreed contract while the team member steered the
+  decisions (npm over pnpm, ConfigMap-delivered config.js, no tests for now),
+  reviewed, and ran it. Tool/runtime versions were pinned to exact,
+  live-verified releases.
+- **Verification:** lint + build green; the app was tested locally end-to-end
+  against the backend (Postgres + Vite dev proxy). The first delete failed with
+  a 400; manual troubleshooting traced it to the client sending a JSON
+  content-type on the body-less DELETE request, which was corrected
+  (content-type only when a body is present). After the fix the full create /
+  edit / delete flow worked. An AI consistency review additionally added a NaN
+  guard on the form.
+- **Outcome:** merged — app-frontend#7 (skeleton) and #9 (property CRUD screens).
+
 ## 2026-05-24 — app-backend skeleton, properties API, and Helm chart (#32)
 
 - **Tool:** Claude (claude.ai web, Opus 4.7) for planning and brainstorming;
