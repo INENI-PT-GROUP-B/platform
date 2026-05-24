@@ -33,6 +33,31 @@ AI-assisted change.
 
 ---
 
+## 2026-05-24 — app-backend skeleton, properties API, and Helm chart (#32)
+
+- **Tool:** Claude (claude.ai web, Opus 4.7) for planning and brainstorming;
+  Claude Code (local, WSL, Opus 4.7) in plan mode at high effort for the
+  implementation, the consistency review, and branch / commit / PR drafting
+- **Scope:** `app-backend` — application skeleton (`src/server.ts`,
+  `package.json`, `tsconfig.json`, `eslint.config.js`, `drizzle.config.ts`,
+  `Dockerfile`, `docker-compose.yml`, `.github/workflows/ci.yaml`), the
+  properties domain (`src/db/schema.ts`, `src/db/index.ts`, `src/routes/`,
+  generated migration, Vitest tests), and the Helm chart (`chart/`)
+- **What:** generated the Fastify + TypeScript + Drizzle backend in three
+  increments — skeleton; the `properties` schema + migration-on-startup +
+  `/healthz` + CRUD with validation + tests; and the tenant app Helm chart
+  (backend/frontend/ingress, Traefik path routing, conditional BasicAuth
+  middleware annotation). Tool and runtime versions were pinned to exact,
+  live-verified releases.
+- **Verification:** lint + build + a manual end-to-end run against a local
+  Postgres (migrations on startup, `/healthz` 200, CRUD round-trip, 400/404
+  cases); `helm lint` + `helm template` for the chart. A separate AI
+  consistency-review pass against the deployment contract confirmed the
+  BasicAuth handling and surfaced fixes (startupProbe, frontend-only image
+  pull secret, `required` value guards), which were applied.
+- **Outcome:** open as `app-backend`#6 (skeleton), #7 (properties/CRUD/health),
+  #8 (Helm chart) — stacked, refs `platform`#32; pending review.
+
 ## 2026-05-24 — Terraform IAM module (S1-08)
 
 - **Tool:** Claude Code (local, macOS, Opus 4.7)
