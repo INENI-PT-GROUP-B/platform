@@ -175,8 +175,11 @@ Contents:
   (`window.APP_CONFIG`, `apiBaseUrl` always `/api`); the image serves the file
   statically and must not also write it
 - `.github/workflows/ci.yaml` — lint, build on PRs
-- `.github/workflows/release.yaml` — on release tag, builds and pushes the
-  frontend image only (no chart in this repo)
+- `.github/workflows/release.yml` — on push to `main` and on git tags
+  matching `v*`, builds and pushes the frontend image (no chart in this
+  repo). Image tags: `latest` on the default branch, `sha-<short>` on every
+  build, and the semver version with `v` prefix (e.g. `v0.1.0`, matching
+  the `values/app-version.yaml` convention) on tag pushes
 - `README.md` — local dev setup, env-var contract
 
 The image-pull secret for GHCR is synced per tenant namespace via ESO.
