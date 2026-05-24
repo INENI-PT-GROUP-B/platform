@@ -100,6 +100,11 @@
 - Base: 441.27 EUR x 2 months = 882.54 EUR
 - Recommended request: **882.54 EUR**
 
+## Granted Budget
+
+Based on the lecturer's calculation, the team has been allocated **500 EUR
+per month**. The estimated 441.27 EUR/month above fits within this allowance.
+
 ## Calculator References
 
 - GCP Pricing Calculator Estimate: [GCP Pricing Calculator Estimate](https://cloud.google.com/products/calculator/estimate-preview/CiRjMzUzNDcyOC1lY2YwLTQyMDYtYmY4OC0wYWYzNGJkMWQ1N2IQAQ%3D%3D?_gl=1*xdoyu3*_up*MQ..&gclid=CjwKCAjw5NvPBhAoEiwA_2egfgXL06KlOBHH5otEKWucYJzMzgLPsH0-2LzR07sjdGNJb911TGlw0xoCShoQAvD_BwE&gclsrc=aw.ds)
