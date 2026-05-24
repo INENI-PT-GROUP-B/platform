@@ -237,8 +237,10 @@ platform-level SaaS tenant (landlord).
   migrations (run on startup; idempotent). Multi-stage Alpine Dockerfile.
 - Frontend: Vite + React 18 + TypeScript, React Router, TanStack Query,
   Tailwind CSS. Multi-stage Alpine Dockerfile with nginx serving the
-  static bundle. Runtime backend URL injection via `/config.js` written by
-  an entrypoint script from env vars.
+  static bundle. Runtime backend URL injection via `/config.js`, delivered
+  by the Helm chart as a ConfigMap exposing `window.APP_CONFIG`
+  (`apiBaseUrl`, always `/api` under path-based routing). The image serves
+  the file statically and must not also write it.
 
 **Authentication.** Handled at the ingress level via Traefik BasicAuth
 (see § Ingress § Per-tenant BasicAuth). The application has no auth
@@ -255,8 +257,8 @@ endpoints and no auth state.
 - Frontend
   - Image: `ghcr.io/ineni-pt-group-b/app-frontend:<tag>`
   - Port: `80` (nginx serving static files)
-  - Backend URL injection: runtime config via `/config.js` written by an
-    entrypoint script from env vars
+  - Backend URL injection: `/config.js` delivered by the Helm chart as a
+    ConfigMap exposing `window.APP_CONFIG` (`apiBaseUrl`, always `/api`)
 
 **API surface** (all routes pass through the BasicAuth middleware at the
 ingress before reaching the backend):
