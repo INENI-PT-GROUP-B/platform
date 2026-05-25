@@ -33,6 +33,32 @@ AI-assisted change.
 
 ---
 
+## 2026-05-25 — app-frontend release workflow (S1-12)
+
+- **Tool:** Claude Code (local, macOS, Opus 4.7)
+- **Scope:** `app-frontend` — new `.github/workflows/release.yml`;
+  `platform` — `docs/claude/repository-layout.md` § app-frontend (two
+  small follow-up doc syncs to keep the canonical layout description in
+  step with the workflow)
+- **What:** drafted the release workflow for `app-frontend` — GHCR
+  image build and push on `push` to `main` and on git tags `v*`, using
+  `docker/metadata-action` for tag computation (`sha-<short>` on every
+  build, semver `v*` on tag push) and `docker/build-push-action` with
+  the GHA cache. Auth via the built-in `GITHUB_TOKEN`. OCI source label
+  links the package to the private repo so visibility is inherited.
+- **Verification:** a review pass against the project conventions caught
+  a real bug — the initial `pattern={{version}}` would have stripped the
+  `v` prefix and produced an image tag (`0.1.0`) that did not match the
+  `v0.1.0` form pinned in `values/app-version.yaml` per
+  `architecture-decisions.md`; replaced with `pattern={{raw}}` before
+  opening the PR. After review feedback from `@ronaldley`, the `latest`
+  tag was dropped as well — nothing in the platform consumes it (tenants
+  pin `v*`, `staging` uses `imageTagOverride`) and a mutable tag cuts
+  against the pinning line followed elsewhere. CI green on every push.
+- **Outcome:** merged — `app-frontend`#13 (workflow); `platform`#64
+  (initial doc sync) and `platform`#67 (doc follow-up after the `latest`
+  drop).
+
 ## 2026-05-24 — app-frontend SPA (skeleton + property CRUD screens)
 
 - **Tool:** Claude (claude.ai web, Opus 4.7) for planning and brainstorming;
