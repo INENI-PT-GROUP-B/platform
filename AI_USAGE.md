@@ -33,6 +33,34 @@ AI-assisted change.
 
 ---
 
+## 2026-05-25 — Crossplane provider configs, ExternalDNS, pg-backups IAM hardening
+
+- **Tool:** Claude Code (local, WSL, Opus 4.7)
+- **Scope:** `platform-gitops` — `crossplane/providers/` (three ProviderConfigs
+  + three DeploymentRuntimeConfigs) and
+  `applications/crossplane-providerconfigs.yaml` (#12, S2-10); ExternalDNS
+  `applications/externaldns.yaml` + `values/externaldns.yaml` (#14, S2-04).
+  `platform-iac` — `terraform/backup/` least-privilege custom role
+  (#37, S1-08a follow-up)
+- **What:** generated the Crossplane provider configuration (provider-gcp via
+  Workload Identity / `InjectedIdentity`, provider-helm and provider-kubernetes
+  in-cluster, plus DeploymentRuntimeConfigs pinning each controller
+  ServiceAccount) and a multi-source Argo CD Application for ExternalDNS (Cloud
+  DNS, WI, `txtOwnerId=gke-prod`, `policy=sync`). Also refactored the pg-backups
+  bucket IAM from `roles/storage.admin` to a custom role with only
+  `storage.buckets.get/setIamPolicy` after review feedback. Resource shapes and
+  the external-dns chart values were verified against current upstream docs
+  before writing; chart and tool versions pinned.
+- **Verification:** YAML validated locally (parse, yamllint limits,
+  apiVersions/kinds against upstream docs); `terraform fmt` + `validate` for the
+  IaC change. Review feedback — least-privilege scoping, premature issue-closing
+  on runtime-gated acceptance criteria, and missing DeploymentRuntimeConfigs for
+  helm/kubernetes — was incorporated. Runtime verification (providers Healthy,
+  ExternalDNS writing records) is gated on the cluster + root App-of-Apps and
+  deferred.
+- **Outcome:** merged — `platform-gitops`#12 (closes #11), `platform-iac`#37
+  (closes #36). Open — `platform-gitops`#14 (closes #10), pending review.
+
 ## 2026-05-25 — app-frontend release workflow (S1-12)
 
 - **Tool:** Claude Code (local, macOS, Opus 4.7)

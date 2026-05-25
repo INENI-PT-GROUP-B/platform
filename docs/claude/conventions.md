@@ -105,6 +105,19 @@ CI gates must be reproducible — pin tool versions so an upstream release canno
 - Do not pin freshness-driven tools (security scanners).
 - Upgrades go through an explicit PR; no Renovate/Dependabot.
 
+## File extensions: `.yml` vs `.yaml`
+
+Both are valid YAML and every tool we use accepts either. Pick the extension
+by the file's ecosystem so the repositories stay consistent:
+
+- **`.yaml`** — Kubernetes, Helm, and Crossplane manifests (the Kubernetes
+  ecosystem default): Helm charts (`Chart.yaml`, `values.yaml`,
+  `templates/*.yaml`), Argo CD `Application`s, Crossplane providers, XRDs,
+  Compositions, tenant claims, and `values/app-version.yaml`.
+- **`.yml`** — files whose own tooling defaults to `.yml`: GitHub Actions
+  workflows (`.github/workflows/*.yml`), `.yamllint.yml`, the issue template
+  `task.yml`, and `docker-compose.yml`.
+
 ## What not to commit
 
 Never:
