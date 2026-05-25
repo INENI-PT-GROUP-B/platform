@@ -88,6 +88,33 @@ this scope.
 - **TLS:** **cert-manager** issuing certificates via **Let's Encrypt ACME**
   using the **DNS-01 challenge** against Cloud DNS.
 
+### Zone lifecycle — persistent, not recreated
+
+The Cloud DNS managed zone `platform-zone` is treated as **persistent
+infrastructure**, in the same class as the GCS Terraform-state bucket and
+Google Secret Manager: it is created and delegated once and is **not** destroyed
+on teardown. `bootstrap/bootstrap.sh` reconciles it create-if-absent — an
+existing zone resource is reused as-is (in-zone records and IAM bindings
+continue to be managed by their owners), and only a fully empty project triggers
+a one-time creation.
+
+This **supersedes the earlier "recreate, not import" decision** (task list
+S1-09). Recreating the zone on every bootstrap would reassign the Google
+authoritative nameservers and force a matching NS update at the registrar
+(Porkbun) during the run. That either breaks the "no manual click after
+`bootstrap.sh` kickoff" constraint or requires a registrar API credential on the
+operator's machine. Keeping the zone persistent removes the registrar step from
+the bootstrap path entirely: after the one-time initial delegation, no Porkbun
+access is ever needed again — also the best outcome for bus factor, since only
+one team member holds registrar access.
+
+`terraform import` stays rejected: it leaves a manual, non-reproducible step in
+the provisioning path. The persistent zone is a pre-existing resource that
+`bootstrap.sh` references rather than imports, mirroring how it already treats
+the state bucket.
+
+Decided in issue #51 (Option B).
+
 ## Ingress
 
 **Traefik** as the in-cluster ingress controller.
