@@ -1,7 +1,7 @@
 # Task List — INENI-PT-GROUP-B
 
 > **Generated:** 2026-05-20  
-> **Last revised:** 2026-05-21  
+> **Last revised:** 2026-05-25  
 > **Deadline:** 2026-06-26, 14:00 CEST  
 > **Team:** mr (Marco), am (Alex), rl (Ronny), pp (Patrick)  
 > **Domain:** `fhuebung.lol` · **GCP Project:** `dotted-axle-495612-f4`
@@ -58,11 +58,11 @@
 | S1-08 | Add Terraform module `terraform/iam/` — Workload Identity pool, SA bindings for in-cluster workloads (ExternalDNS, cert-manager, ESO, Crossplane). No GitHub OIDC federation needed (Terraform runs only locally via `bootstrap.sh`). | **pp** | P2 | S1-07 |
 | S1-08a | Add Terraform resource for GCS backup bucket `gs://${PROJECT}-pg-backups` (location europe-west1, uniform bucket-level access, versioning off, lifecycle rule: delete objects > 30 days). IAM binding so tenant-namespace ServiceAccounts can write under their own `<tenant>/` prefix via WI. | **rl** | P2 | S1-08 |
 
-### Step 4 — DNS zone re-created via Terraform
+### Step 4 — DNS zone referenced (persistent, not recreated)
 
 | # | Task | Assignee | Pillar | Depends on |
 |---|---|---|---|---|
-| S1-09 | Manually delete the existing Cloud DNS zone `platform-zone` (created out-of-band), then create it fresh via Terraform with identical config (name `platform-zone`, DNS name `fhuebung.lol.`, public visibility, DNSSEC off). Reason: importing would break the one-click `bootstrap.sh` deployment promise. After re-creation, check the new NS records and update them at Porkbun if they differ. Add IAM binding `roles/dns.admin` (scoped to the zone) for ExternalDNS + cert-manager SAs. Update `DNS_SETUP.md` to reflect that the zone is now Terraform-managed. | **am** | P2 | S1-08 |
+| S1-09 | Reference the persistent Cloud DNS zone `platform-zone` in the `dns/` module via a `data` source (Option B, decided in #51): the zone is created create-if-absent by `bootstrap.sh` and never recreated, so the registrar (Porkbun) nameservers stay stable and no registrar step runs during bootstrap. Add IAM binding `roles/dns.admin` (scoped to the zone) for ExternalDNS + cert-manager SAs. Update `DNS_SETUP.md` to the persistent-zone model, including the zone-creation parameters for the empty-project case. The one-time `gcloud` zone creation lives in `bootstrap.sh` (S1-10). | **am** | P2 | S1-08 |
 
 ### Step 5 — Bootstrap script (assembles everything above into a one-command deployment)
 
@@ -269,7 +269,7 @@ S1-01 Terraform lint CI (gate for all .tf PRs)
               └── S1-07 GKE cluster
                     └── S1-08 Workload Identity + IAM
                           ├── S1-06a GCS backup bucket
-                          └── S1-09 DNS zone (recreate via Terraform)
+                          └── S1-09 DNS zone (persistent, referenced via data source)
                                 └── S1-10 bootstrap.sh
                                       └── S2-01 ArgoCD bootstrap
                                             └── S2-02 root App-of-Apps
