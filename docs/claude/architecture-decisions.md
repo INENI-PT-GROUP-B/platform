@@ -201,6 +201,21 @@ other deployment steps" and at the same time captures the Helm-chart bonus.
 Soft multi-tenancy is sufficient per the assignment; hard multi-tenancy and
 virtual clusters are out of scope.
 
+### Crossplane version — pinned to the 1.x line
+
+Crossplane is pinned to the **1.x maintenance line** (currently chart
+`crossplane` 1.20.8, the latest 1.x stable). Crossplane 2.x is intentionally
+**not** adopted: v2 removed native patch-and-transform (P&T) Compositions, and
+the planned tenant Compositions — the CloudNativePG `Cluster`, the BasicAuth
+setup, and the app Helm `Release` — are built on P&T. Staying on 1.x preserves
+that Composition design.
+
+Adopting Crossplane 2.x, which would mean migrating the Compositions to its
+function-based pipeline model, is a **separate, larger decision** and is out of
+scope for now. Upgrades off the 1.x line go through an explicit PR.
+
+Decided in INENI-PT-GROUP-B/platform-gitops#22.
+
 ## Application updates and staging
 
 The image tags and chart version every tenant runs are held in a single file
