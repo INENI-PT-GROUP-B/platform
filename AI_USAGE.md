@@ -33,6 +33,37 @@ AI-assisted change.
 
 ---
 
+## 2026-05-29 — Sprint 2 Argo CD work (S2-14 CI gate, S2-06 Traefik)
+
+- **Tool:** Claude Code (local, WSL, Opus 4.7)
+- **Scope:** `platform-gitops` — `.github/workflows/validate.yml`
+  (#27, S2-14); `applications/traefik.yaml`,
+  `applications/traefik-certificate.yaml`, `values/traefik.yaml`,
+  `traefik/certificate.yaml` (#30, S2-06)
+- **What:** drafted the `helm lint --strict` + `kubeconform` validation gate
+  for the Argo CD manifests (discovers each Helm-sourced Application, pulls
+  the pinned chart, lints against its `values/*.yaml`; schema-validates
+  `applications/`, `cert-manager/`, `crossplane/providers/`, `tenants/`
+  against the Kubernetes API and a pinned `datreeio/CRDs-catalog` commit;
+  Crossplane XRDs/Compositions deferred to S3). Then the Traefik
+  Application set: chart-install Application (Traefik 40.2.0), sibling
+  Application for the CRD-dependent wildcard `Certificate` (decoupled with
+  `SkipDryRunOnMissingResource=true`, mirroring `cert-manager-clusterissuers`),
+  the `Certificate` itself, and Helm values (LoadBalancer with
+  ExternalDNS hostname annotation, `web` → `websecure` redirect, default
+  TLSStore referencing the wildcard Secret, Traefik's own ACME off).
+- **Verification:** for #27, two review rounds were incorporated — the
+  discovery loop was inverted from `values/*.yaml` to `applications/*.yaml`
+  so the Application stays the source of truth for the chart-↔-values link,
+  and `cert-manager/` was added to the trigger paths after a near-miss. For
+  #30, the chart 40.2.0 value keys were verified against `helm pull`,
+  `helm lint --strict` reported `0 chart(s) failed`, and the cross-file
+  references (`letsencrypt-prod` issuer, Certificate Secret ↔ TLSStore,
+  ExternalDNS annotation contract) were checked locally. Live verification
+  (LB IP, DNS record, `Ready=True`) is gated on S2-08.
+- **Outcome:** merged — `platform-gitops`#27 (closes #26). Open —
+  `platform-gitops`#30 (closes #25), pending review.
+
 ## 2026-05-29 — Argo CD bootstrap (S2-01)
 
 - **Tool:** Claude Code (local, macOS, Opus 4.7)
