@@ -33,6 +33,31 @@ AI-assisted change.
 
 ---
 
+## 2026-05-29 — Argo CD bootstrap (S2-01)
+
+- **Tool:** Claude Code (local, macOS, Opus 4.7)
+- **Scope:** `platform-iac` — new `bootstrap/argocd-values.yaml` and
+  `bootstrap/argocd-bootstrap.yaml`; `bootstrap/bootstrap.sh` (new Phase 5);
+  `README.md`
+- **What:** drafted the Argo CD bootstrap that fills the Phase-5 placeholder
+  left by S1-10 — a minimal Helm values file (server insecure behind Traefik,
+  `argocd.fhuebung.lol` Ingress with the wildcard TLS secret
+  `wildcard-fhuebung-lol`), a single self-adopting root App-of-Apps pointing at
+  `platform-gitops/applications/`, and Phase 5 in `bootstrap.sh` (pinned chart
+  `argo/argo-cd` 9.5.16, `helm upgrade --install` then a `kubectl apply` of the
+  root). Only values diverging from the chart defaults were set; the chart
+  version was verified and pinned.
+- **Verification:** the chart was rendered with `helm template` against the
+  values file to confirm the Ingress class, host, wildcard TLS secret and
+  `server.insecure`; `bash -n` and a YAML parse passed. Review feedback from
+  `@marco93r` was incorporated — a redundant `kubectl rollout status` was
+  removed (`helm --wait` already covers it) and the root apply was switched to
+  server-side so Argo CD takes over field ownership cleanly on first sync.
+  `@mlexinho27` flagged the wildcard-cert producer and its namespace as a
+  non-blocking cross-component follow-up, to be handled on the cert-manager
+  side. End-to-end run against the cluster is deferred to Day-1 validation.
+- **Outcome:** merged — `platform-iac`#40 (closes #38).
+
 ## 2026-05-25 — Crossplane provider configs, ExternalDNS, pg-backups IAM hardening
 
 - **Tool:** Claude Code (local, WSL, Opus 4.7)
