@@ -33,6 +33,53 @@ AI-assisted change.
 
 ---
 
+## 2026-05-30 — External Secrets Operator (S2-05) and Argo CD Ingress wildcard rename
+
+- **Tool:** Claude Code (local, macOS, Opus 4.7)
+- **Scope:** `platform-gitops` — new `applications/external-secrets.yaml`,
+  `values/external-secrets.yaml`,
+  `applications/external-secrets-clustersecretstore.yaml`, and
+  `external-secrets/clustersecretstores/gcp-secret-manager.yaml`;
+  `.github/workflows/validate.yml` extension (#32, S2-05). `platform-iac`
+  — `bootstrap/argocd-values.yaml` and `README.md` wildcard secret name
+  alignment (#42, S2-01 follow-up).
+- **What:** drafted ESO as a Day-1 platform component — a multi-source Argo
+  CD Application installing the upstream `external-secrets` Helm chart
+  (pinned 2.5.0), a minimal values file (Workload Identity annotation on
+  the chart's ServiceAccount, requests + memory-only limits per component
+  matching the other platform values files), and a sibling Application
+  shipping a `ClusterSecretStore` (`external-secrets.io/v1`) that
+  authenticates to Google Secret Manager via `auth.workloadIdentity`
+  referencing the ESO KSA; the GSA (`external-secrets`, project-level
+  `roles/secretmanager.secretAccessor`, provisioned in platform-iac S1-08)
+  is wired through the chart's `serviceAccount` annotation. `validate.yml`
+  was extended to cover the new `external-secrets/` directory in both the
+  kubeconform path list and the trigger `paths:` filter. Separately, the
+  wildcard TLS secret name in the Argo CD Ingress and its README
+  description was aligned from `wildcard-fhuebung-lol` to
+  `wildcard-fhuebung-lol-tls` to match the actual cert Secret produced by
+  `platform-gitops/traefik/certificate.yaml`.
+- **Verification:** chart version, `ClusterSecretStore` apiVersion (`v1`),
+  the `gcpsm.auth.workloadIdentity` field shape, and the kubeconform
+  catalog schema availability were verified directly against the chart and
+  the pinned catalog SHA before writing. Local verification mirrored the
+  CI gate — `helm lint --strict` clean, `kubeconform` valid with 0 errors,
+  and `helm template` was used to confirm resources land on the
+  controller, webhook and certController deployments, that the WI
+  annotation sits on the ESO controller's ServiceAccount, and that the
+  chart default `rbac.serviceAccountTokenCreate: true` makes the
+  `serviceAccountRef` auth path runtime-viable. Review feedback from
+  `@mlexinho27` was incorporated — `installCRDs: true` was pinned
+  explicitly so a future chart-default flip cannot silently render the
+  CRDs out of the release (same forward-safety reasoning as the chart
+  version pin, consistent with the explicit `crds.enabled`/`crds.keep`
+  pin in `values/cert-manager.yaml`). The wildcard-rename surfaced while
+  reviewing the chart-contract doc (`platform-gitops`#33), where the
+  canonical name was pinned in the same round. End-to-end run against
+  the cluster is deferred to S2-08.
+- **Outcome:** merged — `platform-gitops`#32 (closes #13), `platform-iac`#42
+  (closes #41).
+
 ## 2026-05-29 — Sprint 2 Argo CD work (S2-14 CI gate, S2-06 Traefik)
 
 - **Tool:** Claude Code (local, WSL, Opus 4.7)
