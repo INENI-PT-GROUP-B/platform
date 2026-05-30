@@ -1,0 +1,130 @@
+<mxfile host="Electron" agent="claude">
+  <diagram name="02 Day-1 Bootstrap" id="day1-bootstrap">
+    <mxGraphModel dx="2076" dy="1331" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1600" pageHeight="1300" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=18;fontStyle=1;" value="Day-1 bootstrap within INENI-PT-GROUP-B" vertex="1">
+          <mxGeometry height="40" width="700" x="40" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontStyle=2;" value="&lt;span style=&quot;font-style: normal;&quot;&gt;All phases of bootstrap.sh are merged. Argo CD then reconciles the platform components below from platform-gitops/applications/&lt;/span&gt;" vertex="1">
+          <mxGeometry height="20" width="1200" x="40" y="66" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-op" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=13;fillColor=#fafafa;strokeColor=#cccccc;dashed=0;" value="Operator workstation" vertex="1">
+          <mxGeometry height="1180" width="280" x="40" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-gcp" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=13;fillColor=#f7faff;strokeColor=#6c8ebf;dashed=1;" value="GCP project: dotted-axle-495612-f4   ·   europe-west1" vertex="1">
+          <mxGeometry height="1180" width="500" x="340" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-gke" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=13;fillColor=#f7faff;strokeColor=#6c8ebf;dashed=1;" value="GKE cluster (standard, zonal, WI)" vertex="1">
+          <mxGeometry height="1180" width="440" x="860" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-gitops" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=13;fillColor=#ffe6cc;strokeColor=#d79b00;dashed=0;" value="platform-gitops" vertex="1">
+          <mxGeometry height="1180" width="240" x="1320" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="p0" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#f5f5f5;strokeColor=#666666;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Phase 0 — Preflight&lt;/b&gt;&lt;br&gt;gcloud / terraform / kubectl / helm present&lt;br&gt;active gcloud account + ADC&lt;br&gt;backend.tf bucket name = ${PROJECT}-tfstate&lt;br&gt;set active project" vertex="1">
+          <mxGeometry height="90" width="240" x="60" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Phase 1 — Enable GCP APIs&lt;/b&gt;&lt;br&gt;compute · container · dns · iam · iamcredentials&lt;br&gt;cloudresourcemanager · secretmanager · storage · serviceusage&lt;br&gt;&lt;i&gt;iamcredentials = WI token-minting; no-op if already enabled&lt;/i&gt;" vertex="1">
+          <mxGeometry height="100" width="460" x="360" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Phase 2 — State bucket + DNS zone + terraform init&lt;/b&gt;&lt;br&gt;create-if-absent (intentionally outside Terraform):&lt;br&gt;gs://&amp;lt;project&amp;gt;-tfstate (UBLA, versioning)&lt;br&gt;Cloud DNS zone &lt;b&gt;platform-zone&lt;/b&gt; (persistent, NS at Porkbun)&lt;br&gt;then: terraform init (GCS backend)" vertex="1">
+          <mxGeometry height="140" width="460" x="360" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="p3-container" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=12;fillColor=#eef4ff;strokeColor=#6c8ebf;dashed=1;" value="Phase 3 — terraform apply (5 modules)" vertex="1">
+          <mxGeometry height="240" width="460" x="360" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="p3-network" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;network&lt;/b&gt;&lt;br&gt;VPC + subnet&lt;br&gt;+ firewall" vertex="1">
+          <mxGeometry height="64" width="140" x="370" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="p3-cluster" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;cluster&lt;/b&gt;&lt;br&gt;GKE Standard,&lt;br&gt;WI + Dataplane V2" vertex="1">
+          <mxGeometry height="64" width="140" x="520" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="p3-dns" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;dns&lt;/b&gt;&lt;br&gt;Zone-scoped roles/dns.admin&lt;br&gt;+ project-level roles/dns.reader&lt;br&gt;(ExternalDNS)&lt;br&gt;&lt;i&gt;zone via Phase 2&lt;/i&gt;" vertex="1">
+          <mxGeometry height="80" width="140" x="670" y="455" as="geometry" />
+        </mxCell>
+        <mxCell id="p3-iam" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;iam&lt;/b&gt;&lt;br&gt;4 GSAs (ExternalDNS, cert-manager,&lt;br&gt;ESO, Crossplane provider-gcp)&lt;br&gt;+ Workload Identity bindings" vertex="1">
+          <mxGeometry height="100" width="220" x="370" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="p3-backup" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;backup&lt;/b&gt;&lt;br&gt;gs://&amp;lt;project&amp;gt;-pg-backups&lt;br&gt;(UBLA, 30d lifecycle,&lt;br&gt;custom IAM role)" vertex="1">
+          <mxGeometry height="100" width="210" x="600" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Phase 4 — Kubeconfig&lt;/b&gt;&lt;br&gt;gcloud container clusters get-credentials&lt;br&gt;kubectl ready against new cluster" vertex="1">
+          <mxGeometry height="80" width="420" x="380" y="690" as="geometry" />
+        </mxCell>
+        <mxCell id="p5a" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Phase 5a — Argo CD install&lt;/b&gt;&lt;br&gt;helm install argocd with values:&lt;br&gt;Ingress &lt;b&gt;argocd.fhuebung.lol&lt;/b&gt; + wildcard TLS" vertex="1">
+          <mxGeometry height="90" width="400" x="880" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="p5b" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Phase 5b — Root App-of-Apps&lt;/b&gt;&lt;br&gt;Argo CD Application&lt;br&gt;→ source: platform-gitops/applications/" vertex="1">
+          <mxGeometry height="80" width="400" x="880" y="867" as="geometry" />
+        </mxCell>
+        <mxCell id="apps-src" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#ffe6cc;strokeColor=#d79b00;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;applications/&lt;/b&gt;&lt;br&gt;Argo CD Application&lt;br&gt;manifests" vertex="1">
+          <mxGeometry height="80" width="200" x="1340" y="920" as="geometry" />
+        </mxCell>
+        <mxCell id="fanout-container" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=12;fillColor=#fffbe6;strokeColor=#d6b656;dashed=1;" value="Argo CD-reconciled platform components" vertex="1">
+          <mxGeometry height="230" width="440" x="860" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="t-cnpg" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="cloudnative-pg" vertex="1">
+          <mxGeometry height="40" width="130" x="870" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="t-edns" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="externaldns" vertex="1">
+          <mxGeometry height="40" width="130" x="1010" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="t-cxp-cfg" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="crossplane-providerconfigs" vertex="1">
+          <mxGeometry height="40" width="130" x="1150" y="1060" as="geometry" />
+        </mxCell>
+        <mxCell id="t-certm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="cert-manager" vertex="1">
+          <mxGeometry height="40" width="130" x="870" y="1105" as="geometry" />
+        </mxCell>
+        <mxCell id="t-certm-ci" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="cert-manager-&lt;br&gt;clusterissuers" vertex="1">
+          <mxGeometry height="40" width="130" x="1010" y="1105" as="geometry" />
+        </mxCell>
+        <mxCell id="t-cxp-core" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="crossplane" vertex="1">
+          <mxGeometry height="40" width="130" x="1150" y="1105" as="geometry" />
+        </mxCell>
+        <mxCell id="t-cxp-prov" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="crossplane-providers" vertex="1">
+          <mxGeometry height="40" width="130" x="870" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="t-eso" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="external-secrets" vertex="1">
+          <mxGeometry height="40" width="130" x="1010" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="t-eso-css" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="external-secrets-&lt;br&gt;clustersecretstore" vertex="1">
+          <mxGeometry height="40" width="130" x="1150" y="1150" as="geometry" />
+        </mxCell>
+        <mxCell id="t-traefik" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="traefik" vertex="1">
+          <mxGeometry height="40" width="130" x="870" y="1195" as="geometry" />
+        </mxCell>
+        <mxCell id="t-traefik-cert" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="traefik-certificate" vertex="1">
+          <mxGeometry height="40" width="130" x="1010" y="1195" as="geometry" />
+        </mxCell>
+        <mxCell id="t-prom" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#fff2cc;strokeColor=#d6b656;dashed=1;verticalAlign=middle;align=center;" value="kube-prometheus-stack&lt;br&gt;&lt;i&gt;(S4-01, bonus)&lt;/i&gt;" vertex="1">
+          <mxGeometry height="40" width="130" x="1150" y="1195" as="geometry" />
+        </mxCell>
+        <mxCell id="e-p0-p1" edge="1" parent="1" source="p0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeColor=#0066cc;" target="p1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-p1-p2" edge="1" parent="1" source="p1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeColor=#0066cc;" target="p2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-p2-p3" edge="1" parent="1" source="p2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeColor=#0066cc;" target="p3-container">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-p3-p4" edge="1" parent="1" source="p3-container" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeColor=#0066cc;" target="p4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-p4-p5a" edge="1" parent="1" source="p4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeColor=#0066cc;" target="p5a">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-p5a-p5b" edge="1" parent="1" source="p5a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeColor=#0066cc;" target="p5b">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-p5b-apps" edge="1" parent="1" source="p5b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeColor=#0066cc;" target="apps-src">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-apps-fanout" edge="1" parent="1" source="apps-src" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeColor=#0066cc;" target="fanout-container" value="reconciles applications/*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
