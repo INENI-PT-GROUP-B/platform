@@ -74,9 +74,11 @@ AI-assisted change.
   CRDs out of the release (same forward-safety reasoning as the chart
   version pin, consistent with the explicit `crds.enabled`/`crds.keep`
   pin in `values/cert-manager.yaml`). The wildcard-rename surfaced while
-  reviewing the chart-contract doc (`platform-gitops`#33), where the
-  canonical name was pinned in the same round. End-to-end run against
-  the cluster is deferred to S2-08.
+  reviewing the chart-contract doc (`platform-gitops`#33); the doc default
+  was aligned with the real Secret name there, but the chart itself
+  (`app-backend/chart/values.yaml`) still carries the un-aligned
+  `wildcard-fhuebung-lol` and is tracked for a follow-up PR pair.
+  End-to-end run against the cluster is deferred to S2-08.
 - **Outcome:** merged — `platform-gitops`#32 (closes #13), `platform-iac`#42
   (closes #41).
 
