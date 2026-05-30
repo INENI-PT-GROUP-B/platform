@@ -2,10 +2,20 @@
 
 ## Purpose
 
-This document accompanies the diagram `logical_architecture.drawio`
-(and its PNG export). It explains the components visible in the
-diagram and the main data flows — intended as a reading guide for
-reviewers, the lecturer, and new team members.
+This document accompanies the diagrams in this directory:
+
+- `logical_architecture.drawio` — the static component view (who exists,
+  who talks to whom).
+- `day1-bootstrap.drawio` — the Day-1 bootstrap phases flow
+  (`bootstrap.sh` phases 0-5 plus the Argo CD root App-of-Apps fan-out
+  into the platform-component Applications).
+- `day2-tenant-provisioning.drawio` — the Day-2 tenant onboarding
+  flow (PR with a tenant claim → Argo CD → Crossplane → tenant live
+  under `<tenant>.fhuebung.lol`).
+
+It explains the components visible in the diagrams and the main data
+flows — intended as a reading guide for reviewers, the lecturer, and
+new team members.
 
 Rationale for technology choices is **not** kept here, but in
 [`docs/claude/architecture-decisions.md`](../claude/architecture-decisions.md).
@@ -81,6 +91,23 @@ direct cluster interaction.
 A second `bootstrap.sh` run is only needed for changes at the cluster
 topology level (new node pool, VPC change, IAM role addition) — the
 script is safe to re-run because every phase is idempotent.
+
+### Day-1 bootstrap diagram
+
+`day1-bootstrap.drawio` (with PNG export `.drawio.png`) shows the same
+sequence as a swim-lane flow. Four lanes left-to-right — operator
+workstation, GCP control plane, GKE cluster, platform-gitops — make
+visible which actor owns each phase's output. Time flows top-to-bottom
+through Phase 0 (preflight), Phase 1 (enable GCP APIs), Phase 2 (state
+bucket + persistent DNS zone create-if-absent + `terraform init`), Phase 3
+(`terraform apply` over the five child modules — network, cluster, dns,
+iam, backup), Phase 4 (kubeconfig), Phase 5 (Argo CD install + root
+App-of-Apps). All phases are implemented in the merged `bootstrap.sh`.
+
+The post-bootstrap fan-out groups the Argo CD-reconciled platform
+components into a single container. `kube-prometheus-stack` is drawn
+dashed because it is still pending (S4-01 bonus); every other
+Application has already been merged to `main`.
 
 ## Components in detail
 
@@ -401,6 +428,21 @@ during a demo.
 6. The tenant is live: `https://tenant-c.fhuebung.lol` is reachable
    with the BasicAuth prompt as the first interaction.
 
+#### Day-2 tenant provisioning diagram
+
+`day2-tenant-provisioning.drawio` (with PNG export `.drawio.png`) shows
+the same sequence as a swim-lane phase flow in the Day-1 style. Five
+lanes left-to-right — Developer / platform-gitops, Argo CD, Crossplane,
+the tenant namespace, and the external GCP Secret Manager / Cloud DNS /
+User column — make visible which actor or boundary owns each step. Time
+flows top-to-bottom through Phase 1 (claim merged), Phase 2 (Argo CD
+reconciles the XTenant), Phase 3 (Crossplane matches the Composition),
+Phase 4 (per-tenant resources — namespace and boundaries, Postgres,
+BasicAuth via GSM + ESO, app Helm release — assembled in the tenant
+namespace), and Phase 5 (the URL becomes reachable: ExternalDNS
+publishes the record, Traefik serves the wildcard TLS, BasicAuth gates
+access).
+
 ### TLS certificate issuance (DNS-01 challenge)
 
 1. cert-manager sees a `Certificate` request (or the ongoing renewal
@@ -575,10 +617,14 @@ actual GCP billing is tracked in
 
 ## Maintenance
 
-- Source file: `logical_architecture.drawio` (in this directory).
-- PNG export: `logical_architecture.png` — generated via drawio
-  `File → Export as → PNG`; manual refresh required after every
-  diagram change.
+- Source files (in this directory):
+  - `logical_architecture.drawio` — component view
+  - `day1-bootstrap.drawio` — bootstrap flow
+  - `day2-tenant-provisioning.drawio` — tenant onboarding flow
+- PNG exports: each `<name>.drawio` has a sibling `<name>.drawio.png`
+  generated via drawio `File → Export as → PNG` with "Include a copy
+  of my diagram" enabled. Manual refresh required after every diagram
+  change.
 - When the architecture changes: update `architecture-decisions.md`
-  first, then the diagram, then this README.
-- Last reviewed: 2026-05-21.
+  first, then the affected diagram(s), then this README.
+- Last reviewed: 2026-05-30.
