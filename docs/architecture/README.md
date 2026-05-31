@@ -101,8 +101,9 @@ visible which actor owns each phase's output. Time flows top-to-bottom
 through Phase 0 (preflight), Phase 1 (enable GCP APIs), Phase 2 (state
 bucket + persistent DNS zone create-if-absent + `terraform init`), Phase 3
 (`terraform apply` over the five child modules — network, cluster, dns,
-iam, backup), Phase 4 (kubeconfig), Phase 5 (Argo CD install + root
-App-of-Apps). All phases are implemented in the merged `bootstrap.sh`.
+iam, backup), Phase 4 (kubeconfig), and Phase 5 split into 5a (Argo CD install) and
+5b (root App-of-Apps). All phases are implemented in the merged
+`bootstrap.sh`.
 
 The post-bootstrap fan-out groups the Argo CD-reconciled platform
 components into a single container. `kube-prometheus-stack` is drawn
@@ -627,4 +628,4 @@ actual GCP billing is tracked in
   change.
 - When the architecture changes: update `architecture-decisions.md`
   first, then the affected diagram(s), then this README.
-- Last reviewed: 2026-05-30.
+- Last reviewed: 2026-05-31.
