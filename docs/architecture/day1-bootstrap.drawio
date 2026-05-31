@@ -52,7 +52,7 @@
         <mxCell id="p4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Phase 4 — Kubeconfig&lt;/b&gt;&lt;br&gt;gcloud container clusters get-credentials&lt;br&gt;kubectl ready against new cluster" vertex="1">
           <mxGeometry height="80" width="420" x="380" y="690" as="geometry" />
         </mxCell>
-        <mxCell id="p5a" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Phase 5a — Argo CD install&lt;/b&gt;&lt;br&gt;helm install argocd with values:&lt;br&gt;Ingress &lt;b&gt;argocd.fhuebung.lol&lt;/b&gt; + wildcard TLS" vertex="1">
+        <mxCell id="p5a" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Phase 5a — Argo CD install&lt;/b&gt;&lt;br&gt;helm install argocd with values:&lt;br&gt;Ingress &lt;b&gt;argocd.fhuebung.lol&lt;/b&gt; configured&lt;br&gt;(live once Traefik + wildcard cert reconciled)" vertex="1">
           <mxGeometry height="90" width="400" x="880" y="760" as="geometry" />
         </mxCell>
         <mxCell id="p5b" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Phase 5b — Root App-of-Apps&lt;/b&gt;&lt;br&gt;Argo CD Application&lt;br&gt;→ source: platform-gitops/applications/" vertex="1">
