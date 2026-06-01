@@ -33,6 +33,45 @@ AI-assisted change.
 
 ---
 
+## 2026-06-01 — Day-1 and Day-2 architecture diagrams (S2-13)
+
+- **Tool:** Claude Code (local, macOS, Opus 4.7)
+- **Scope:** `platform` — new `docs/architecture/day1-bootstrap.drawio` +
+  `.drawio.png`, new `docs/architecture/day2-tenant-provisioning.drawio` +
+  `.drawio.png`, updates to `docs/architecture/README.md` describing both
+  diagrams (#83, S2-13).
+- **What:** Claude was used as a faster drafting tool for the initial
+  `.drawio` XML scaffolding of both diagrams — swim-lane geometry, box
+  placement, label markup, and arrow routing — instead of authoring the
+  XML by hand. The substantive work was manual: deciding the phases
+  themselves (which step belongs in which lane, where the cut between
+  Day-1 and Day-2 sits, which sub-steps live inside the Phase 4
+  container), choosing the wording so the diagrams stay self-explanatory
+  without jargon, and coordinating the actors across the lanes so the
+  arrows tell a coherent story. The Day-2 diagram was deliberately
+  redesigned in the Day-1 swim-lane style after the first UML-sequence
+  draft was set aside on readability grounds. Layout fine-tuning (title
+  wording, separator characters, lane labels, lane widths) was done
+  directly in draw.io Desktop. The README narrative for the diagrams
+  was drafted with Claude's help and trimmed manually.
+- **Verification:** XML parsed cleanly for both files before each PNG
+  export. Day-1 was cross-checked against the actual `platform-gitops`
+  state on `main` (eleven Argo CD-reconciled Applications match, only
+  `kube-prometheus-stack` dashed) and against `platform-iac/terraform/dns/`
+  for the `dns.reader` binding from `platform-iac`#44. Day-2 was
+  cross-checked against `architecture-decisions.md` and the existing
+  Tenant onboarding narrative. Three independent review passes from
+  `@marco93r` (Day-1 component spot-check, `dns.reader`, no per-tenant
+  cert-manager step), `@mlexinho27` (Day-2 as-merged vs documented
+  design target, Traefik `Middleware` bridge in Phase 4, GHCR pull secret
+  visibility, Phase 5a/5b README/diagram alignment), and `@ronaldley`
+  (phase-for-phase against `bootstrap.sh`, IAM GSAs verbatim against
+  `terraform/iam/main.tf`, all five Composition items per
+  `architecture-decisions.md` § Multi-tenancy visible in Phase 4) were
+  incorporated through hand-edited diagram and README adjustments, not
+  by regenerating the files.
+- **Outcome:** merged — `platform`#83 (closes #72).
+
 ## 2026-05-30 — External Secrets Operator (S2-05) and Argo CD Ingress wildcard rename
 
 - **Tool:** Claude Code (local, macOS, Opus 4.7)
