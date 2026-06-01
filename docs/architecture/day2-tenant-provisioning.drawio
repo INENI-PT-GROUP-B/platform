@@ -1,0 +1,103 @@
+<mxfile host="Electron" agent="claude">
+  <diagram name="03 Day-2 Tenant Provisioning" id="day2-tenant">
+    <mxGraphModel dx="2076" dy="1331" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1700" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=18;fontStyle=1;" value="Day-2 tenant provisioning within INENI-PT-GROUP-B" vertex="1">
+          <mxGeometry height="40" width="700" x="40" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontStyle=2;" value="&lt;span style=&quot;font-style: normal;&quot;&gt;From a tenant claim in git to a TLS-protected, BasicAuth-gated URL - target end-state per architecture-decisions.md; XRD + Compositions land in S3-xx.&lt;/span&gt;" vertex="1">
+          <mxGeometry height="20" width="1300" x="40" y="66" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-dev" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=13;fillColor=#fafafa;strokeColor=#cccccc;dashed=0;" value="Developer / platform-gitops" vertex="1">
+          <mxGeometry height="970" width="240" x="40" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-argocd" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=13;fillColor=#fff8e1;strokeColor=#d6b656;dashed=0;" value="Argo CD" vertex="1">
+          <mxGeometry height="970" width="220" x="300" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-cxp" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=13;fillColor=#fff8e1;strokeColor=#d6b656;dashed=0;" value="Crossplane" vertex="1">
+          <mxGeometry height="970" width="240" x="540" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-tenant" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=13;fillColor=#eef9e8;strokeColor=#82b366;dashed=0;" value="Tenant namespace: tenant-&amp;lt;name&amp;gt;" vertex="1">
+          <mxGeometry height="970" width="440" x="800" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lane-ext" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=13;fillColor=#f7faff;strokeColor=#6c8ebf;dashed=0;" value="External: GCP Secret Manager, Cloud DNS, User" vertex="1">
+          <mxGeometry height="970" width="513" x="1260" y="90" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#f5f5f5;strokeColor=#666666;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Phase 1 — Claim&lt;/b&gt;&lt;br&gt;Developer opens a PR&lt;br&gt;tenants/&amp;lt;name&amp;gt;.yaml&lt;br&gt;and merges it into main" vertex="1">
+          <mxGeometry height="100" width="220" x="50" y="140" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Phase 2 — Reconcile&lt;/b&gt;&lt;br&gt;Argo CD picks up the claim&lt;br&gt;and creates the matching&lt;br&gt;XTenant resource in the cluster" vertex="1">
+          <mxGeometry height="100" width="200" x="310" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#fff2cc;strokeColor=#d6b656;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Phase 3 — Compose&lt;/b&gt;&lt;br&gt;Crossplane matches the XTenant&lt;br&gt;to the tenant Composition&lt;br&gt;and orchestrates&lt;br&gt;the per-tenant resources" vertex="1">
+          <mxGeometry height="110" width="220" x="550" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="p4-container" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=12;fillColor=#f6fbf3;strokeColor=#82b366;dashed=1;" value="Phase 4 — Tenant resources come up" vertex="1">
+          <mxGeometry height="410" width="420" x="810" y="540" as="geometry" />
+        </mxCell>
+        <mxCell id="p4a" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#d5e8d4;strokeColor=#82b366;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Namespace, ResourceQuota, LimitRange, NetworkPolicies&lt;/b&gt;&lt;br&gt;the per-tenant boundaries are set up first" vertex="1">
+          <mxGeometry height="50" width="400" x="820" y="575" as="geometry" />
+        </mxCell>
+        <mxCell id="p4b" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#d5e8d4;strokeColor=#82b366;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Postgres database&lt;/b&gt; (CloudNativePG)&lt;br&gt;the operator provisions the DB and writes&lt;br&gt;the connection credentials into a Kubernetes Secret" vertex="1">
+          <mxGeometry height="65" width="400" x="820" y="635" as="geometry" />
+        </mxCell>
+        <mxCell id="p4c" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#d5e8d4;strokeColor=#82b366;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Per-tenant ESO-synced secrets + Middleware&lt;/b&gt;&lt;br&gt;Crossplane generates the BasicAuth password and writes it to GSM.&lt;br&gt;ESO syncs the BasicAuth htpasswd and the shared GHCR pull secret&lt;br&gt;into the namespace as Kubernetes Secrets.&lt;br&gt;Crossplane then creates the Traefik &lt;b&gt;Middleware&lt;/b&gt; referencing&lt;br&gt;the htpasswd Secret (the Ingress in the next step wires it in)." vertex="1">
+          <mxGeometry height="120" width="400" x="820" y="710" as="geometry" />
+        </mxCell>
+        <mxCell id="p4d" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=10;fillColor=#d5e8d4;strokeColor=#82b366;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;App Helm release&lt;/b&gt;&lt;br&gt;image tags read from values/app-version.yaml&lt;br&gt;(a per-tenant imageTagOverride wins when set)&lt;br&gt;Deployments + Services + Ingress come up;&lt;br&gt;the backend runs its DB migrations on startup" vertex="1">
+          <mxGeometry height="100" width="400" x="820" y="839" as="geometry" />
+        </mxCell>
+        <mxCell id="p5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#d5e8d4;strokeColor=#82b366;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Phase 5 — Reachable&lt;/b&gt;&lt;br&gt;ExternalDNS publishes &amp;lt;tenant&amp;gt;.fhuebung.lol → Traefik LoadBalancer IP&lt;br&gt;Traefik serves TLS via the shared wildcard certificate&lt;br&gt;BasicAuth at the Ingress protects access · User opens the URL → 200 OK" vertex="1">
+          <mxGeometry height="100" width="420" x="810" y="956" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-gsm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Google Secret Manager&lt;/b&gt;&lt;br&gt;tenant-&amp;lt;name&amp;gt;/basicauth-htpasswd&lt;br&gt;shared/ghcr-pull-secret" vertex="1">
+          <mxGeometry height="75" width="220" x="1290" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-dns" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;Cloud DNS&lt;/b&gt; (platform-zone)&lt;br&gt;A record &amp;lt;tenant&amp;gt;.fhuebung.lol&lt;br&gt;→ Traefik LoadBalancer IP" vertex="1">
+          <mxGeometry height="70" width="220" x="1290" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="ext-user" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#f5f5f5;strokeColor=#666666;dashed=0;verticalAlign=middle;align=center;" value="&lt;b&gt;User browser&lt;/b&gt;&lt;br&gt;HTTPS GET&lt;br&gt;(BasicAuth → 200)" vertex="1">
+          <mxGeometry height="70" width="140" x="1556" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="e-p1-p2" edge="1" parent="1" source="p1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeColor=#0066cc;" target="p2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-p2-p3" edge="1" parent="1" source="p2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeColor=#0066cc;" target="p3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-p3-p4" edge="1" parent="1" source="p3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeColor=#0066cc;" target="p4-container">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-p4-p5" edge="1" parent="1" source="p4d" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeColor=#0066cc;exitX=0.5;exitY=1;exitDx=0;exitDy=0;">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1020" y="956" />
+              <mxPoint x="1020" y="956" />
+            </Array>
+            <mxPoint x="1020" y="961" as="sourcePoint" />
+            <mxPoint x="1020" y="956" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e-p4c-gsm" edge="1" parent="1" source="p4c" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeColor=#0066cc;" target="ext-gsm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e-p5-user" edge="1" parent="1" source="p5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeColor=#0066cc;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="ext-dns">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1252" y="1010" />
+              <mxPoint x="1252" y="995" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="7rmXEexthbkUzeJJfUQN-1" edge="1" parent="1" source="ext-dns" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeColor=#0066cc;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="ext-user">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1974" y="863" as="sourcePoint" />
+            <mxPoint x="2044" y="863" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
