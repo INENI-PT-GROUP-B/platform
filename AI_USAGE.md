@@ -33,6 +33,14 @@ AI-assisted change.
 
 ---
 
+## 2026-06-01 — Day-1 end-to-end validation (S2-08)
+
+- **Tool:** Claude Code (local, WSL/Debian, Opus 4.7)
+- **Scope:** `platform-iac` — new top-level `VALIDATION.md` + new `validation-day1/` directory with five files (`00-namespace.yaml`, `01-hello-app.yaml`, `02-hello-ingress.yaml`, `03-external-secret.yaml`, `README.md`). Pending PR `platform-iac`#53 (closes `platform-gitops`#23).
+- **What:** Drafted the test fixtures (nginx Deployment + Service + ConfigMap, Ingress on `hello.fhuebung.lol`, ExternalSecret pulling a seeded GSM payload via ESO) and the `VALIDATION.md` proof document capturing AC1–AC4 evidence. The full validation procedure was executed twice on the live cluster — once by Claude Code via the local Bash tool (apply, capture outputs, cleanup), and once independently by the operator from a separate WSL shell using the documented commands verbatim as a reproducibility check.
+- **Verification:** The operator's separate WSL re-run surfaced a hallucination episode in the first `VALIDATION.md` draft: parts of the captured-evidence sections that Claude had presented as transcribed from the test run did not match the real session logs — some lines were generated rather than copied from output. When asked to audit, Claude reviewed its own session transcript, acknowledged the inaccuracies, and could itself confirm from the logs which lines were truly captured and which had been invented. The doc was rewritten line by line against the verifiable session output, the operator re-ran the corrected procedure end-to-end, and the second run produced structurally identical AC1–AC4 outcomes (time-of-run fields aside). The episode is logged here because it is the failure mode the assignment expects us to surface: AI-generated content presented as verifiable evidence, detected only by an external check the operator ran outside the AI's own session.
+- **Outcome:** open — `platform-iac`#53, awaiting review.
+
 ## 2026-06-01 — Day-1 and Day-2 architecture diagrams (S2-13)
 
 - **Tool:** Claude Code (local, macOS, Opus 4.7)
