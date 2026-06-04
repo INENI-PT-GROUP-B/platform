@@ -33,6 +33,77 @@ AI-assisted change.
 
 ---
 
+## 2026-06-03 — Root App spec-identity CI check (#29)
+
+- **Tool:** Claude Code (local, Windows/PowerShell, Opus 4.7)
+- **Scope:** `INENI-PT-GROUP-B/.github` — new
+  `.github/workflows/root-app-spec-identity-reusable.yml` (PR
+  `.github`#12). Two follow-up caller PRs in `platform-iac` and
+  `platform-gitops` will wire the reusable from each side and close
+  `platform-gitops`#29.
+- **What:** Drafted the full `workflow_call` reusable that diffs the
+  `spec` blocks of `platform-iac/bootstrap/argocd-bootstrap.yaml` and
+  `platform-gitops/applications/root.yaml` on every PR that touches
+  either file. Comparison normalises through
+  `yq -o=json '.spec' | jq -S .` to canonical sorted-key JSON, then
+  `diff -u`. `metadata.finalizers` diverges intentionally on the gitops
+  side, so only `spec` is compared; a null-spec guard prevents false
+  passes if the top-level key disappears. Cross-repo checkout uses raw
+  `git clone` over HTTPS — both target repos are public, so no token
+  plumbing. Defensive shell hygiene: every user-controlled value (the
+  `pr-side` input and step outputs derived from it) is threaded through
+  env vars instead of direct `${{ }}` interpolation into shell.
+- **Verification:** Workflow shape and styling reviewed against the
+  existing reusables in the same directory
+  (`commitlint-reusable.yml`, `lint-reusable.yml`,
+  `pr-title-reusable.yml`). yq pinned to v4.53.2 to match
+  `platform-gitops/.github/workflows/validate.yml`. The two contract
+  files were manually inspected to confirm their `spec` blocks are
+  currently identical on `main` (i.e. the gate starts green). A
+  deliberate-divergence negative test will run after this PR merges and
+  the caller workflows go live in `platform-iac` / `platform-gitops`;
+  the failing CI run URL will be linked in `platform-gitops`#29's
+  closing comment.
+- **Outcome:** open — `INENI-PT-GROUP-B/.github`#12, awaiting review.
+
+## 2026-06-03 — provider-gcp install + Option A ADR (S2-09, #21)
+
+- **Tool:** Claude Code (local, Windows/PowerShell, Opus 4.7)
+- **Scope:** `platform-gitops` — new
+  `crossplane/provider-installs/provider-family-gcp.yaml` and
+  `crossplane/provider-installs/provider-gcp-secretmanager.yaml`;
+  comment edits to
+  `crossplane/providers/deployment-runtime-config-gcp.yaml` and
+  `applications/crossplane-providers.yaml` (PR `platform-gitops`#48,
+  closes `platform-gitops`#21, transitively retires
+  `platform-gitops`#17). `platform` — new "Crossplane providers —
+  family layout for GCP" subsection in
+  `docs/claude/architecture-decisions.md` (companion PR `platform`#88).
+- **What:** Drafted the two Provider CR files matching the existing
+  project pattern (cf. `provider-helm.yaml`,
+  `provider-kubernetes.yaml`), both pinned to v2.5.4. Drafted the DRC
+  inline-comment update articulating the Option A trade-off (DRC name
+  stays generic `provider-gcp` even though the controller pod ships in
+  the sub-provider, per the per-Provider ownership constraint from
+  crossplane/crossplane#4552), and drafted the architecture-decisions
+  ADR subsection that records the decision. The rbac-manager reasoning
+  for skipping a manual ClusterRoleBinding ("provider-gcp-secretmanager
+  only manages its own MR CRDs in-cluster, unlike provider-helm /
+  provider-kubernetes which need cluster-admin") was Claude-suggested
+  and verified against `values/crossplane.yaml`
+  (`rbacManager.replicas: 1`).
+- **Verification:** Both package versions (v2.5.4 of
+  `provider-family-gcp` and `provider-gcp-secretmanager`) verified
+  live against the Upbound marketplace via `WebFetch` before pinning.
+  The DRC-naming Option A decision itself was made by am with rl in
+  `platform-gitops`#21's comment thread (rl deferred the final call to
+  am 2026-05-31); the file-level write-ups (inline DRC comment, ADR
+  subsection) are Claude-drafted in language that records the decision
+  for the next reader. `kubeconform`, `yamllint`, `helm lint`, and
+  `markdownlint` CI all green on both PRs.
+- **Outcome:** open — `platform-gitops`#48 and `platform`#88,
+  awaiting review.
+
 ## 2026-06-01 — Day-1 end-to-end validation (S2-08)
 
 - **Tool:** Claude Code (local, WSL/Debian, Opus 4.7)
