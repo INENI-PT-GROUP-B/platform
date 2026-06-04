@@ -216,6 +216,44 @@ scope for now. Upgrades off the 1.x line go through an explicit PR.
 
 Decided in INENI-PT-GROUP-B/platform-gitops#22.
 
+### Crossplane providers — family layout for GCP
+
+The GCP provider is installed via Upbound's **family layout**, not the
+deprecated monolithic `provider-gcp`:
+
+- `provider-family-gcp` — metadata-only package; ships the shared
+  `gcp.upbound.io/v1beta1 ProviderConfig` CRD; no controller pod.
+- `provider-gcp-secretmanager` — sub-provider; ships the controller that
+  manages `secret.gcp.upbound.io` managed resources.
+
+Only `secretmanager` is installed: it is the single GCP service the project
+needs (the per-tenant BasicAuth Composition writes the htpasswd as a
+SecretVersion into Google Secret Manager; ESO syncs it back into the tenant
+namespace). DNS, TLS, Postgres and monitoring use their own operators and
+do not need a Crossplane provider.
+
+#### DeploymentRuntimeConfig naming — Option A
+
+The pre-existing `DeploymentRuntimeConfig` and the IaC variable
+`crossplane_provider_gcp_ksa_name` are named `provider-gcp`. Under the family
+layout the DRC's `serviceAccountTemplate` is per-Provider-owned, not
+family-shared (see
+[crossplane/crossplane#4552](https://github.com/crossplane/crossplane/issues/4552)),
+so the SA is actually owned by the sub-provider `provider-gcp-secretmanager`.
+
+We keep the generic name regardless: the `runtimeConfigRef.name` string is
+arbitrary, the project scope has no second GCP sub-provider, and renaming
+would mean a coordinated cross-repo IaC PR (KSA variable, GSA `account_id`,
+WI binding) without functional benefit. If a second sub-provider is added
+later — for example a Crossplane-managed GCS bucket via `provider-gcp-storage`
+— it would need its own DRC + GSA + WI binding anyway, so the rename happens
+for free at that point.
+
+The trade-off is documented inline at
+`crossplane/providers/deployment-runtime-config-gcp.yaml` in `platform-gitops`.
+
+Decided in INENI-PT-GROUP-B/platform-gitops#21.
+
 ## Application updates and staging
 
 The image tags and chart version every tenant runs are held in a single file
