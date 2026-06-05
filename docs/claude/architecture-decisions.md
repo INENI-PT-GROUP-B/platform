@@ -201,6 +201,16 @@ other deployment steps" and at the same time captures the Helm-chart bonus.
 Soft multi-tenancy is sufficient per the assignment; hard multi-tenancy and
 virtual clusters are out of scope.
 
+### Tiering
+
+The XTenant XRD's `spec.tier` exposes two ResourceQuota envelopes (`small`
+and `medium`) to demonstrate that the platform differentiates per-tenant
+resource governance. The platform does not prescribe when each tier
+applies — that policy belongs to the tenant-operator and is documented
+separately in the tenant onboarding guide
+(`platform-gitops/docs/tenant-onboarding.md`, planned by S4-06). Concrete
+quota numbers live in `crossplane/compositions/xtenant-default.yaml`.
+
 ### Crossplane version — pinned to the 1.x line
 
 Crossplane is pinned to the **1.x maintenance line** (currently chart
