@@ -33,6 +33,40 @@ AI-assisted change.
 
 ---
 
+## 2026-06-05 — Recurring AI-assisted issue and PR review drafting (mr)
+
+- **Tool:** Claude Code (local, WSL/Debian, Opus 4.7)
+- **Scope:** cross-repo — `[TASK]` issue bodies and PR review comments
+  drafted by `@marco93r` across `platform`, `platform-iac`,
+  `platform-gitops`, `app-backend`, and `app-frontend`. Recurring
+  practice, not tied to a single PR; logged here as a single entry
+  covering the workflow rather than per occurrence.
+- **What:** Claude is used as a drafting assistant for two recurring
+  authoring tasks. (1) Issue bodies — given a short prompt describing
+  the task, Claude drafts the four required sections (`Context`,
+  `Scope`, `Acceptance Criteria`, `Grading Pillar`) in the org-wide
+  `[TASK]` template shape from `INENI-PT-GROUP-B/.github`, with the
+  GFM line-break and label conventions from `CONTRIBUTING.md`
+  § Creating Issues already applied. (2) PR reviews — Claude reads the
+  diff and the linked issue, then drafts review comments (correctness
+  spot-checks, convention deviations, missing acceptance-criteria
+  coverage). In both cases the AI output is a **draft, never a final
+  artefact**.
+- **Verification:** every draft is reviewed and adjusted before it
+  leaves my machine — no draft is posted as-is. Issue bodies are
+  checked against the `task.yml` template structure and the Grading
+  Pillar enum, then edited for wording, scope tightening, and
+  acceptance-criteria realism before `gh issue create`. Review-comment
+  drafts are checked against the actual diff (no fabricated line
+  references, no invented file paths) and against the project
+  conventions in `docs/claude/`; comments that read plausibly but
+  miss the real concern are rewritten or dropped, and the final
+  approve / request-changes decision and prioritisation of comments
+  are mine. Drafts that drift from the architecture-decisions record
+  are corrected manually rather than accepted.
+- **Outcome:** ongoing — recurring workflow; individual issues and PRs
+  authored this way are not linked here to avoid bloating the log.
+
 ## 2026-06-03 — Root App spec-identity CI check (#29)
 
 - **Tool:** Claude Code (local, Windows/PowerShell, Opus 4.7)
