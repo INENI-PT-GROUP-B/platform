@@ -33,6 +33,61 @@ AI-assisted change.
 
 ---
 
+## 2026-06-05 — Sprint 3 xtenant-default Composition + Tiering doc (S3-02, S3-03) (rl)
+
+- **Tool:** Claude Code (local, WSL/Debian, Opus 4.7)
+- **Scope:** `INENI-PT-GROUP-B/platform`#92 (Tiering paragraph in
+  `docs/claude/architecture-decisions.md` § Multi-tenancy) and
+  `INENI-PT-GROUP-B/platform-gitops`#55 (the first
+  `crossplane/compositions/xtenant-default.yaml`). The Composition PR closes both
+  S3-02 (`platform-gitops`#38, reassigned offline from pp) and S3-03
+  (`platform-gitops`#54).
+- **What:** Two artefacts in sequence. (1) Tiering paragraph — Claude proposed
+  three framing options (Headroom-orientiert / SaaS-Pricing / Capability-
+  Demonstration); I picked Capability-Demonstration. An am PR review pointed out
+  that the XRD-description and `platform-gitops`#38 scope both name ResourceQuota
+  + LimitRange, so the paragraph was widened on a follow-up commit and the plan
+  adjusted so `LimitRange.max` is tier-mapped while the other LimitRange fields
+  stay constant. (2) Composition — 401 LOC Crossplane v1.x P&T rendering seven
+  resources via `provider-kubernetes` `Object`: Namespace, ResourceQuota (tier-
+  mapped on 7 fields), LimitRange (per-container; `max` tier-mapped), and four
+  NetworkPolicies (default-deny ingress, default-deny egress + DNS allow,
+  permissive in-namespace 5432 decoupled from S3-04, traefik → app on 80/3000).
+  Two commits on the dev branch so the slices were readable in review.
+- **Verification:** Plan mode with two `Explore` subagents covering the XRD shape
+  + provider-kubernetes install and the cluster footprint + app baseline.
+  `yamllint` exit 0 locally on both files. Tier-sizing numbers derived from the
+  documented cluster bounds (12–24 vCPU / 48–96 GiB) and the
+  `app-backend/chart/values.yaml` pod numbers. Cluster reconciliation lands with
+  S3-08 (am, staging tenant).
+- **Outcome:** merged — `platform`#92 at 16:00 UTC (auto-closed `platform`#90);
+  `platform-gitops`#55 at 18:11 UTC after a rebase onto the `platform-gitops`#57
+  fix (auto-closed `platform-gitops`#38 and `platform-gitops`#54).
+
+## 2026-06-05 — Crossplane sync unblock — XRD admission + kubeconform Composition skip (rl)
+
+- **Tool:** Claude Code (local, WSL/Debian, Opus 4.7)
+- **Scope:** `INENI-PT-GROUP-B/platform-gitops`#57 — `crossplane/xrds/xtenant.yaml`
+  and `.github/workflows/validate.yml`.
+- **What:** Two bugs surfaced together after pp's `platform-gitops`#50 went live.
+  (1) The XRD generated from `platform-gitops`#46 was rejected at admission because
+  `additionalProperties: false` (which I had requested during the #46 review)
+  clashes with the system-owned `spec` fields Crossplane injects at
+  CRD-generation. Dropped it from both `spec` and `imageTagOverride`. A Marco PR
+  review reframed my inline rationale away from a generic K8s rule to the
+  Crossplane-injection cause; the comments were rewritten on a third commit
+  before merge. (2) The datreeio CRDs-catalog at the pinned SHA ships the
+  Crossplane v2 `Composition` schema; our install is v1.x P&T, so `kubeconform`
+  rejected `platform-gitops`#55's `resources[]`. Added `Composition` to the
+  `-skip` arg list with an inline rationale comment, same pattern as the existing
+  `ProviderConfig` and `Object` skips.
+- **Verification:** Catalog schema content checked via
+  `curl ... | python3 -c "json.load(sys.stdin)..."`, confirming the v2 field set
+  verbatim. `yamllint` exit 0 locally on both files.
+- **Outcome:** merged — `platform-gitops`#57 merged 17:49 UTC, auto-closed
+  `platform-gitops`#56. `platform-gitops`#55 was rebased + force-pushed to pick
+  up the new `-skip` list and CI went green.
+
 ## 2026-06-05 — Recurring AI-assisted issue and PR review drafting (mr)
 
 - **Tool:** Claude Code (local, WSL/Debian, Opus 4.7)
