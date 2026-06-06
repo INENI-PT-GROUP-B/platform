@@ -148,7 +148,7 @@ Per tenant, the Crossplane Composition provisions:
   htpasswd format (`<username>:<bcrypt-hash>`). Username is fixed to `admin`;
   password is per-tenant random.
 - The htpasswd string stored in Google Secret Manager
-  (`tenant-<name>/basicauth-htpasswd`).
+  (`tenant-<name>-basicauth-htpasswd`).
 - A Kubernetes `Secret` in the tenant namespace, materialised from GSM by ESO.
 - A Traefik `Middleware` custom resource referencing that Secret.
 - An annotation on the tenant Ingress
@@ -238,7 +238,7 @@ deprecated monolithic `provider-gcp`:
 - `provider-family-gcp` — metadata-only package; ships the shared
   `gcp.upbound.io/v1beta1 ProviderConfig` CRD; no controller pod.
 - `provider-gcp-secretmanager` — sub-provider; ships the controller that
-  manages `secret.gcp.upbound.io` managed resources.
+  manages `secretmanager.gcp.upbound.io` managed resources.
 
 Only `secretmanager` is installed: it is the single GCP service the project
 needs (the per-tenant BasicAuth Composition writes the htpasswd as a
