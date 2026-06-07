@@ -25,13 +25,13 @@
         <mxCell id="8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=13;fillColor=#f7faff;strokeColor=#6c8ebf;dashed=1;" value="GCP Project: dotted-axle-495612-f4   ·   Region: europe-west1" vertex="1">
           <mxGeometry height="1232" width="1575" x="171" y="-38" as="geometry" />
         </mxCell>
-        <mxCell id="9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="Cloud DNS&#xa;zone: platform-zone&#xa;*.fhuebung.lol" vertex="1">
+        <mxCell id="9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="Cloud DNS&#xa;zone: platform-zone (persistent)&#xa;*.fhuebung.lol" vertex="1">
           <mxGeometry height="60" width="200" x="1283" y="28" as="geometry" />
         </mxCell>
         <mxCell id="10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="Google Secret Manager&#xa;(per-tenant +&#xa;shared platform secrets)" vertex="1">
           <mxGeometry height="60" width="200" x="565" y="32" as="geometry" />
         </mxCell>
-        <mxCell id="11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="GCS&#xa;• Terraform state&#xa;• PG / barman backups" vertex="1">
+        <mxCell id="11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fontSize=11;fillColor=#dae8fc;strokeColor=#6c8ebf;dashed=0;verticalAlign=middle;align=center;" value="GCS&#xa;• &amp;lt;project&amp;gt;-tfstate (Terraform state)&#xa;• &amp;lt;project&amp;gt;-pg-backups (CloudNativePG backups)" vertex="1">
           <mxGeometry height="60" width="177" x="788" y="32" as="geometry" />
         </mxCell>
         <mxCell id="13" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fontStyle=1;fontSize=12;fillColor=#eef4ff;strokeColor=#6c8ebf;dashed=1;" value="VPC" vertex="1">
