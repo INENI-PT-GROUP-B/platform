@@ -628,4 +628,4 @@ actual GCP billing is tracked in
   change.
 - When the architecture changes: update `architecture-decisions.md`
   first, then the affected diagram(s), then this README.
-- Last reviewed: 2026-05-31.
+- Last reviewed: 2026-06-07.
