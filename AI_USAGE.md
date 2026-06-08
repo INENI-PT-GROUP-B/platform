@@ -33,6 +33,34 @@ AI-assisted change.
 
 ---
 
+## 2026-06-08 — Sprint 3 close prep: chart fix + multi-tenancy PR1 (S3-09) (rl)
+
+- **Tool:** Claude Code (local, WSL/Debian, Opus 4.7), plus a second
+  planning pass on claude.ai (web, Opus 4.8) before starting.
+- **Scope:**
+  - `INENI-PT-GROUP-B/app-backend`#21 + PR `app-backend`#23 — chart
+    Ingress TLS `secretName` typo against `docs/chart-contract.md`.
+  - `INENI-PT-GROUP-B/app-backend`#22 — cut `v0.1.0` release.
+  - `INENI-PT-GROUP-B/app-frontend`#17 — cut `v0.1.0` release.
+  - `INENI-PT-GROUP-B/platform-gitops`#75 — `feat(tenants)`
+    demotenant1 + demotenant2 for `platform-gitops`#62 (S3-09).
+- **What:** Worked through S3-09 end-to-end with Claude. Plan mode
+  in Claude Code for the local work, plus a second planning pass on
+  Opus 4.8 in the web before starting. The preflight caught three
+  things I would have hit later: the `v0.1.0` tags in
+  `values/app-version.yaml` did not exist anywhere yet, the chart's
+  TLS `secretName` had drifted from the contract by a missing `-tls`
+  suffix, and the `S3-09 → S3-08` dependency in the task list turned
+  out to be plan sequencing rather than a real technical gate.
+- **Verification:** `helm lint` + `helm template` against the
+  Composition's value shape rendered the corrected Ingress.
+  Tenant claims yamllint-clean. Live-cluster validation belongs to
+  the follow-up doc PR.
+- **Outcome:** Three issues opened, two PRs opened
+  (`app-backend`#23, `platform-gitops`#75).
+
+---
+
 ## 2026-06-06 — S3-05 BasicAuth + GHCR-pull Composition extension (pp)
 
 - **Tool:** Claude Code (local, macOS, Opus 4.7)
