@@ -33,6 +33,40 @@ AI-assisted change.
 
 ---
 
+## 2026-06-06 — S3-05 BasicAuth + GHCR-pull Composition extension (pp)
+
+- **Tool:** Claude Code (local, macOS, Opus 4.7)
+- **Scope:** `INENI-PT-GROUP-B/platform-gitops`#58 — the S3-05 extension of the
+  shared `xtenant-default` Composition with seven new resources: ESO `Password`
+  generator + bcrypt-htpasswd `ExternalSecret` in `crossplane-system`, Crossplane
+  `Secret` + `SecretVersion` under `secretmanager.gcp.upbound.io` writing to
+  Google Secret Manager, two tenant-namespace `ExternalSecret`s (htpasswd
+  materialisation + GHCR dockerconfigjson), and a Traefik BasicAuth
+  `Middleware`. The Composition grew from 401 to 743 LOC.
+- **What:** The plan on `platform-gitops`#39 was iterated three times before
+  the implementation. The first sketch used an ESO `PushSecret` for the GSM
+  write; rejected because it would have left `provider-gcp-secretmanager`
+  installed but unused, breaking the IAM split from S1-08 where the
+  `external-secrets` GSA is read-only and the `crossplane-provider-gcp` GSA
+  holds write. The second sketch used a Kubernetes `Job` with a custom image
+  to bcrypt-hash; rejected as unnecessary plumbing. The shipped design is
+  hybrid: ESO generates and bcrypt-hashes via the Sprig `htpasswd` template,
+  Crossplane provider-gcp-secretmanager writes the `SecretVersion` via
+  `secretDataSecretRef` consuming the in-cluster Secret.
+- **Verification:** A pre-push verification round cross-checked each API field
+  against upstream sources. Three substantive bugs were caught before the
+  first push: the API subdomain was `secret.gcp.upbound.io` in the local draft
+  but `secretmanager.gcp.upbound.io` in the v2.5.0 provider examples (the ADR
+  carried the same wrong subdomain — addressed by the follow-up doc-sync); the
+  v1beta1 replication form was spelled `automatic` instead of the correct
+  `auto`; the Sprig `htpasswd` template was called with two arguments while
+  the vendored sprig in ESO v2.5.0 takes three (`bcrypt` algorithm). Each fix
+  was followed by a `ruby -ryaml -e 'YAML.load(...)'` re-parse against the
+  composition file. Real end-to-end reconciliation against the live cluster
+  is gated on S3-08 (am, staging tenant).
+- **Outcome:** Merged — `platform-gitops`#58 at 12:05 UTC, auto-closed
+  `platform-gitops`#39.
+
 ## 2026-06-05 — Sprint 3 xtenant-default Composition + Tiering doc (S3-02, S3-03) (rl)
 
 - **Tool:** Claude Code (local, WSL/Debian, Opus 4.7)
