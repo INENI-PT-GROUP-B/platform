@@ -35,42 +35,29 @@ AI-assisted change.
 
 ## 2026-06-08 — Sprint 3 close prep: chart fix + multi-tenancy PR1 (S3-09) (rl)
 
-- **Tool:** Claude Code (local, WSL/Debian, Opus 4.7)
-- **Scope:** Sprint-3 close-out coordinated across three repos:
-  - `INENI-PT-GROUP-B/app-backend`#21 + PR `app-backend`#23 (chart Ingress
-    TLS `secretName` typo against `docs/chart-contract.md`)
-  - `INENI-PT-GROUP-B/app-backend`#22 (cut `v0.1.0` release — pending)
-  - `INENI-PT-GROUP-B/app-frontend`#17 (cut `v0.1.0` release — pending)
-  - `INENI-PT-GROUP-B/platform-gitops`#75 (`feat(tenants)` demotenant1 +
-    demotenant2 claims for `platform-gitops`#62 / S3-09)
-- **What:** Plan-mode preflight across Composition, chart and release
-  pipeline before drafting the S3-09 PRs. Three substantive findings that
-  would otherwise have surfaced as live-cluster failures on first
-  reconcile of the tenant claims. (1) `values/app-version.yaml` references
-  `chart 0.1.0`, `backend v0.1.0`, `frontend v0.1.0` — none existed in
-  GHCR; neither app repo had ever been tagged. Tenant Helm Release would
-  have failed `chart-not-found` immediately. (2) `chart/values.yaml`
-  defaulted `ingress.tls.secretName` to `wildcard-fhuebung-lol`, missing
-  the `-tls` suffix the contract (`platform-gitops/docs/chart-contract.md`
-  § Ingress lines 108-118) and the Argo CD bootstrap
-  (`platform-iac/bootstrap/argocd-values.yaml` line 33) both specify.
-  Silent chart-to-contract drift; the fix is PR `app-backend`#23. (3) The
-  task-list dependency `S3-09 → S3-08` (staging tenant first) is plan
-  sequencing, not a technical gate — both depend on the same upstream
-  (chart + images in GHCR), so S3-09 PR1 opened in parallel without
-  waiting on staging.
+- **Tool:** Claude Code (local, WSL/Debian, Opus 4.7), plus a second
+  planning pass on claude.ai (web, Opus 4.8) before starting.
+- **Scope:**
+  - `INENI-PT-GROUP-B/app-backend`#21 + PR `app-backend`#23 — chart
+    Ingress TLS `secretName` typo against `docs/chart-contract.md`.
+  - `INENI-PT-GROUP-B/app-backend`#22 — cut `v0.1.0` release.
+  - `INENI-PT-GROUP-B/app-frontend`#17 — cut `v0.1.0` release.
+  - `INENI-PT-GROUP-B/platform-gitops`#75 — `feat(tenants)`
+    demotenant1 + demotenant2 for `platform-gitops`#62 (S3-09).
+- **What:** Worked through S3-09 end-to-end with Claude. Plan mode
+  in Claude Code for the local work, plus a second planning pass on
+  Opus 4.8 in the web before starting. The preflight caught three
+  things I would have hit later: the `v0.1.0` tags in
+  `values/app-version.yaml` did not exist anywhere yet, the chart's
+  TLS `secretName` had drifted from the contract by a missing `-tls`
+  suffix, and the `S3-09 → S3-08` dependency in the task list turned
+  out to be plan sequencing rather than a real technical gate.
 - **Verification:** `helm lint` + `helm template` against the
-  Composition's `set[]` patch shape
-  (`crossplane/compositions/xtenant-default.yaml` lines 837-905) confirmed
-  the rendered Ingress carries the corrected `secretName`. Cross-checked
-  Composition patches and `crossplane/configmaps/app-version-cm.yaml`
-  against `chart/values.yaml`. Tenant claims yamllint-clean against the
-  repo's `.yamllint.yml`. Live-cluster validation (four kubectl tests per
-  `platform-gitops`#62 acceptance criteria) deferred to the follow-up PR2
-  after Argo CD reconciles the claims.
-- **Outcome:** Three issues opened, two PRs opened (`app-backend`#23,
-  `platform-gitops`#75). `v0.1.0` tag-cuts and follow-up PR2 still
-  pending.
+  Composition's value shape rendered the corrected Ingress.
+  Tenant claims yamllint-clean. Live-cluster validation belongs to
+  the follow-up doc PR.
+- **Outcome:** Three issues opened, two PRs opened
+  (`app-backend`#23, `platform-gitops`#75).
 
 ---
 
