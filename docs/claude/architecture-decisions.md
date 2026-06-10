@@ -168,6 +168,31 @@ Crossplane composing in-cluster resources.
 
 Automated upgrades are handled by CloudNativePG's rolling update feature.
 
+### Backups — direct Workload Identity Federation, no per-tenant GSA
+
+Each tenant `Cluster` takes daily Barman base backups plus continuous WAL
+archiving to `gs://<project>-pg-backups/<tenant>/` (bucket provisioned by
+`platform-iac` `terraform/backup`, 30-day lifecycle delete as a cost
+backstop behind Barman's own 14-day `retentionPolicy`).
+
+The write credential uses **Workload Identity Federation for GKE direct
+resource access**: the Composition mints a per-tenant `BucketIAMMember`
+(via the `provider-gcp-storage` sub-provider) that grants the CNPG
+instance KSA's federated principal
+(`principal://…/subject/ns/tenant-<name>/sa/<name>-cluster`) a
+prefix-scoped `roles/storage.objectAdmin` on the shared bucket. The CNPG
+side only sets `googleCredentials.gkeEnvironment: true` — ambient ADC, no
+`iam.gke.io/gcp-service-account` annotation, no per-tenant GSA, no SA-JSON
+key. The IAM condition pairs `resource.name.startsWith(<tenant prefix>)`
+with the `objectListPrefix` API attribute so object listing works while
+staying inside the tenant's own prefix.
+
+In-tree Barman support is deprecated upstream (removal slated for CNPG
+1.30); we pin operator 1.29.1 and treat the Barman Cloud CNPG-I plugin
+migration as out of scope, mirroring the Crossplane 2.x pinning decision.
+
+Decided in INENI-PT-GROUP-B/platform-gitops#67.
+
 ## Multi-tenancy and SaaS provisioning
 
 **Crossplane** with custom XRDs and Compositions. Crossplane's `provider-helm`
@@ -239,12 +264,16 @@ deprecated monolithic `provider-gcp`:
   `gcp.upbound.io/v1beta1 ProviderConfig` CRD; no controller pod.
 - `provider-gcp-secretmanager` — sub-provider; ships the controller that
   manages `secretmanager.gcp.upbound.io` managed resources.
+- `provider-gcp-storage` — sub-provider; used solely for the per-tenant
+  `BucketIAMMember` on the pg-backups bucket (see § Database § Backups).
 
-Only `secretmanager` is installed: it is the single GCP service the project
-needs (the per-tenant BasicAuth Composition writes the htpasswd as a
-SecretVersion into Google Secret Manager; ESO syncs it back into the tenant
-namespace). DNS, TLS, Postgres and monitoring use their own operators and
-do not need a Crossplane provider.
+Only these two sub-providers are installed, covering the two GCP services
+the Compositions touch (the per-tenant BasicAuth Composition writes the
+htpasswd as a SecretVersion into Google Secret Manager and ESO syncs it
+back; the backup Composition edits the pg-backups bucket IAM policy).
+DNS, TLS, Postgres and monitoring use their own operators and do not need
+a Crossplane provider. All family members are version-pinned in lockstep
+(currently v2.5.4).
 
 #### DeploymentRuntimeConfig naming — Option A
 
@@ -256,12 +285,19 @@ family-shared (see
 so the SA is actually owned by the sub-provider `provider-gcp-secretmanager`.
 
 We keep the generic name regardless: the `runtimeConfigRef.name` string is
-arbitrary, the project scope has no second GCP sub-provider, and renaming
-would mean a coordinated cross-repo IaC PR (KSA variable, GSA `account_id`,
-WI binding) without functional benefit. If a second sub-provider is added
-later — for example a Crossplane-managed GCS bucket via `provider-gcp-storage`
-— it would need its own DRC + GSA + WI binding anyway, so the rename happens
-for free at that point.
+arbitrary and renaming would mean a coordinated cross-repo IaC PR (KSA
+variable, GSA `account_id`, WI binding) without functional benefit.
+
+The second sub-provider anticipated here arrived with the backup work
+(`provider-gcp-storage`, platform-gitops#67). As predicted, it has its own
+DRC (`provider-gcp-storage`, since the `serviceAccountTemplate` is
+per-Provider-owned) and its own WI binding — but it deliberately shares
+the existing `crossplane-provider-gcp` GSA instead of getting its own:
+its only permission need (the bucket-scoped `pgBackupsBucketIamAdmin`
+custom role) was already bound to that GSA, so a dedicated GSA would have
+added IaC surface without narrowing any privilege. The generic
+`provider-gcp` name was kept; the predicted "free rename" was skipped to
+keep the diff minimal.
 
 The trade-off is documented inline at
 `crossplane/providers/deployment-runtime-config-gcp.yaml` in `platform-gitops`.
