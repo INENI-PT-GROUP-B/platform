@@ -33,6 +33,36 @@ AI-assisted change.
 
 ---
 
+## 2026-06-10 — Per-tenant CNPG backups to GCS via direct WIF (S3-04 follow-up) (am)
+
+- **Tool:** Claude Code (local, Windows, Fable 5)
+- **Scope:**
+  - `INENI-PT-GROUP-B/platform-gitops`#67 — Composition resources 17
+    (`BucketIAMMember`) + 18 (`ScheduledBackup`), `backup:` stanza on the
+    CNPG `Cluster`, `provider-gcp-storage` install + DRC.
+  - `INENI-PT-GROUP-B/platform-iac` — Workload Identity binding for the
+    `provider-gcp-storage` KSA on the existing crossplane GSA.
+  - `platform` — § Database § Backups in `architecture-decisions.md`,
+    family-layout / Option A updates, this entry.
+- **What:** Worked the open credential decision in #67 with Claude:
+  compared classic Workload Identity (per-tenant GSA + impersonation,
+  needs an IAM sub-provider) against WIF direct resource access
+  (`principal://` bucket binding, no GSA), and settled on direct WIF.
+  Claude verified the load-bearing facts against vendor docs before
+  implementation: CNPG `googleCredentials.gkeEnvironment` semantics and
+  the in-tree Barman deprecation timeline (operator 1.29.1 via chart
+  0.28.2 still ships it), the WIF principal subject format, the Upbound
+  `BucketIAMMember` v1beta1 schema incl. `condition`, and the GCS gotcha
+  that prefix conditions deny `objects.list` unless paired with the
+  `objectListPrefix` API attribute. It then generated the Composition
+  resources, provider install, DRC, and the IaC binding.
+- **Verification:** `terraform fmt -check` + `terraform validate` locally;
+  manifests cross-checked field-by-field against the Upbound marketplace
+  schema and CNPG 1.29 docs; repo CI (yamllint, kubeconform, tflint).
+  Live backup verification (first base backup + WAL files appearing under
+  the tenant prefix) is pending post-merge and tracked in #67.
+- **Outcome:** PRs open in `platform-gitops`, `platform-iac`, `platform`
+
 ## 2026-06-08 — Sprint 3 close prep: chart fix + multi-tenancy PR1 (S3-09) (rl)
 
 - **Tool:** Claude Code (local, WSL/Debian, Opus 4.7), plus a second
