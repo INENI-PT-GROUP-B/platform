@@ -33,6 +33,47 @@ AI-assisted change.
 
 ---
 
+## 2026-06-11 — CNPG NetworkPolicy diagnosis: status probe + failing backups (rl)
+
+- **Tool:** Claude Code (local, WSL/Debian, Fable 5)
+- **Scope:**
+  - `INENI-PT-GROUP-B/platform-gitops`#91 (new issue) + PR
+    `platform-gitops`#92 — Composition resource 7b
+    (`netpol-allow-cnpg-operator`) in
+    `crossplane/compositions/xtenant-default.yaml`.
+  - Status comments on `platform-gitops`#83 (S3-08 acceptance evidence)
+    and `platform-gitops`#67 (backup verification heads-up).
+- **What:** A routine S3-08 acceptance check surfaced that all four
+  tenant CNPG Clusters report `Instance Status Extraction Error: HTTP
+  communication issue`. Claude ran the diagnosis end-to-end: repo-side
+  rationale check (the tenant NetworkPolicy design never considered
+  operator ingress — gap, not decision), upstream verification (CNPG
+  networking docs: operator must reach instance pods on TCP 8000/5432),
+  and live-cluster evidence (operator logs with `dial tcp <pod>:8000:
+  i/o timeout`, Backup object inventory, policy dump). The live data
+  refuted the initial hypothesis that the blocked status port prevents
+  backups from starting: all 8 backups had started and failed inside
+  barman-cloud with `Project was not passed and could not be determined
+  from the environment` — a second, independent gap. Claude traced it
+  to the egress policy blocking the GKE metadata server that
+  `gkeEnvironment: true` ADC depends on, and verified the
+  dataplane-specific endpoint against Google's GKE auth troubleshooting
+  doc (Dataplane V2: `169.254.169.254/32:80`; V1 would be
+  `169.254.169.252/32:988`), matching the ~42s metadata-retry pattern
+  in the barman logs. The fix is one additional per-tenant
+  NetworkPolicy scoped via a `cnpg.io/cluster` Exists match (no
+  per-tenant patch), ingress 8000+5432 from `cnpg-system`, egress TCP
+  80 to the metadata IP.
+- **Verification:** Pod labels, dataplane (`anetd`,
+  `datapath_provider = "ADVANCED_DATAPATH"` pinned in IaC) and the
+  `gke-metadata-server` ports checked live before writing the rule;
+  `yamllint` clean locally; PR CI green (yamllint, kubeconform, helm
+  lint). The behavioural acceptance criteria (Cluster `Ready=True`,
+  first base backup + WAL files in the bucket) are live-gated
+  post-merge and tracked in `platform-gitops`#91.
+- **Outcome:** issue `platform-gitops`#91 and PR `platform-gitops`#92
+  open; #83/#67 comments posted; this entry.
+
 ## 2026-06-10 — Per-tenant CNPG backups to GCS via direct WIF (S3-04 follow-up) (am)
 
 - **Tool:** Claude Code (local, Windows, Fable 5)
