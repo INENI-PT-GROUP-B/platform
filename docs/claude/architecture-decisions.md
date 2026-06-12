@@ -354,7 +354,7 @@ assignment requirements.
 
 **Domain.** Each platform tenant represents one landlord. The application
 manages that landlord's rental properties: list, create, edit, delete.
-Single table `properties` (label, address, size, rent, notes, timestamps).
+Single table `properties` (label, street, zip, city, sizeSqm, rentEur, notes, timestamps).
 No multi-user support per tenant, no file uploads, no payment flow.
 
 To avoid term collisions, the renter of an apartment is called **lessee** or
