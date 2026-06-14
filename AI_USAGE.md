@@ -80,6 +80,14 @@ AI-assisted change.
 - **Outcome:** `platform-gitops`#96 merged 2026-06-13.
   `platform-gitops`#97 and #105 open. This entry in `platform`.
 
+## 2026-06-14 — Tenant onboarding demo runbook draft (rl)
+
+- **Tool:** Claude Code (local, WSL/Debian, Opus 4.7)
+- **Scope:** `INENI-PT-GROUP-B/platform`#113 + PR `platform`#115 — new `docs/presentation/demo-script.md`.
+- **What:** drafted the S5-02 reusable demo runbook for end-to-end tenant onboarding (pre-flight, optional pre-staged PR, claim shape, step-by-step demo trail, timing, fallback, cleanup). Cross-links to am's `tenant-onboarding.md` rather than duplicating. Tenant name parametrised as `livedemoNN` placeholder so the GSM identity is fresh per run.
+- **Verification:** every embedded `kubectl` command run against the live cluster with `staging` substituted; example outputs match real output verbatim. Composition-derived names cross-checked against the XRD and `xtenant-default.yaml`. Five mid-draft corrections from the live verification round (wrong GKE zone, wrong htpasswd Secret name in the tenant namespace, missing `-n crossplane-system` on `kubectl get tenant`, claim-vs-composite column header swap, overestimated timing total) — all caught before commit.
+- **Outcome:** PR `platform`#115 open as Draft.
+
 ## 2026-06-13 — Crossplane `string.fmt` constant-name patch bug (rl)
 
 - **Tool:** Claude Code (local, WSL/Debian, Opus 4.7)
