@@ -80,6 +80,14 @@ AI-assisted change.
 - **Outcome:** `platform-gitops`#96 merged 2026-06-13.
   `platform-gitops`#97 and #105 open. This entry in `platform`.
 
+## 2026-06-13 — Crossplane `string.fmt` constant-name patch bug (rl)
+
+- **Tool:** Claude Code (local, WSL/Debian, Opus 4.7)
+- **Scope:** `INENI-PT-GROUP-B/platform-gitops`#103 + PR `platform-gitops`#104 — `imageTagOverride` patches in `crossplane/compositions/xtenant-default.yaml`.
+- **What:** the v0.1.2 rollout surfaced that `imageTagOverride` propagated to the backend image tag but silently dropped on every constant-name patch (frontend tag, Backup `ObjectStore` name). Crossplane's `string.fmt` passes the source value as a `fmt.Sprintf` argument; without a `%` verb the constant string renders unchanged and the input is discarded. Fix: add `%.0s` to every constant-name patch so the input is absorbed.
+- **Verification:** the bug shipped in `platform-gitops`#94 and survived the pre-merge AI review because the review was code-only — `helm template` against the value shape, schema checks, no live reconciliation. It only surfaced once the v0.1.2 rollout made the backend/frontend tag divergence end-user-visible. Post-fix verified by re-running the rollout against staging + central with both tags flipping in lockstep.
+- **Outcome:** merged — `platform-gitops`#104 (closes #103).
+
 ## 2026-06-11 — CNPG NetworkPolicy diagnosis: status probe + failing backups (rl)
 
 - **Tool:** Claude Code (local, WSL/Debian, Fable 5)
