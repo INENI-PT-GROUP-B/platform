@@ -33,6 +33,53 @@ AI-assisted change.
 
 ---
 
+## 2026-06-14 — S3-10 rollout verification + S4-04a app crash recovery (pp)
+
+- **Tool:** Claude Code (local, macOS, Opus 4.7)
+- **Scope:**
+  - `INENI-PT-GROUP-B/platform-gitops`#95 (new issue) + PR
+    `platform-gitops`#96 — completing the v0.1.1 lockstep across
+    `crossplane/configmaps/app-version-cm.yaml` and the Composition
+    Resource 15 `chart.version` field.
+  - `INENI-PT-GROUP-B/platform-gitops`#97 — `docs/lifecycle-tests.md`
+    with the S4-04a backend pod crash recovery test.
+  - `INENI-PT-GROUP-B/platform-gitops`#105 —
+    `docs/multi-tenancy-validation.md` Test 5 (S3-10 global app-version
+    rollout evidence).
+  - `platform` — this entry.
+- **What:** S3-10 was approached as a live verification of the rollout
+  mechanism. Claude was used to draft the cluster-query sequence and
+  structure the doc against the existing `multi-tenancy-validation.md`
+  pattern. The very first query — a cross-check of the in-cluster
+  `tenant-app-defaults` ConfigMap against `values/app-version.yaml` on
+  main — showed an unexpected gap: the central #94 bump had not
+  propagated, every tenant pod was still on the pre-bump tags. The
+  header comment in `crossplane/configmaps/app-version-cm.yaml`
+  documented the 3-file lockstep requirement, #94 had only edited the
+  first; the two missed files (the in-cluster ConfigMap content and the
+  Composition Resource 15 `chart.version` field) were bumped in #96 and
+  the rollout completed live on the next Argo CD sync. The S3-10
+  evidence in #105 then captures the subsequent v0.1.1 → v0.1.2
+  frontend cycle where the mechanism worked end-to-end. S4-04a (#97)
+  was run against demotenant1: a backend pod was killed and three
+  independent signals were captured around the delete — the
+  `kubectl get pod -w` watcher, the pod-condition timestamps via
+  `jsonpath`, and a parallel curl-on-port-forward polling loop. All
+  three agreed on a 21 s delete → Ready window. The lifecycle-tests
+  file was structured to mirror `multi-tenancy-validation.md` (Setup /
+  Procedure / Outputs / Proves).
+- **Verification:** Every cluster output in the docs was pulled live
+  with `kubectl` and copied verbatim — no values were invented or
+  paraphrased. The lockstep gap was confirmed against three sources
+  (the live ConfigMap, `values/app-version.yaml` on main, and the
+  ConfigMap file header comment) before #96 was opened. The S4-04a
+  21 s window was reconstructed from three independent signals and
+  cross-checked; all agreed. Repo CI (yamllint, kubeconform, helm lint,
+  markdownlint, commitlint, pr-title) validated the manifest and doc
+  shapes.
+- **Outcome:** `platform-gitops`#96 merged 2026-06-13.
+  `platform-gitops`#97 and #105 open. This entry in `platform`.
+
 ## 2026-06-11 — CNPG NetworkPolicy diagnosis: status probe + failing backups (rl)
 
 - **Tool:** Claude Code (local, WSL/Debian, Fable 5)
