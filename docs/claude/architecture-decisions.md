@@ -147,9 +147,16 @@ Per tenant, the Crossplane Composition provisions:
 - A random password generated at onboarding time, bcrypt-hashed into the
   htpasswd format (`<username>:<bcrypt-hash>`). Username is fixed to `admin`;
   password is per-tenant random.
-- The htpasswd string stored in Google Secret Manager
-  (`tenant-<name>-basicauth-htpasswd`).
-- A Kubernetes `Secret` in the tenant namespace, materialised from GSM by ESO.
+- Two Google Secret Manager entries, both with `deletionPolicy: Orphan` so a
+  tenant offboarding leaves them intact for re-onboarding under the same name:
+  - `tenant-<name>-basicauth-htpasswd` — the bcrypt-hashed htpasswd line read
+    by Traefik via ESO.
+  - `tenant-<name>-basicauth-password` — the plaintext password, kept solely
+    for operator retrieval (e.g. handing the credential to a tenant owner
+    out-of-band). Not consumed by any in-cluster workload. Decided in
+    INENI-PT-GROUP-B/platform-gitops#76.
+- A Kubernetes `Secret` in the tenant namespace, materialised from the
+  `-basicauth-htpasswd` GSM entry by ESO.
 - A Traefik `Middleware` custom resource referencing that Secret.
 - An annotation on the tenant Ingress
   (`traefik.ingress.kubernetes.io/router.middlewares`) wiring the
