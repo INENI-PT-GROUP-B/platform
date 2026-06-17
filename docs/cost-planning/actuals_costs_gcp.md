@@ -24,20 +24,22 @@ Source data is in the `actuals/` folder:
 
 ## Summary
 
-| | Estimate | Actual (per-month equivalent) | Granted budget |
-| --- | --- | --- | --- |
-| Per month | 441.27 € | ~360 € | 500 € |
-| Actually billed for the 40-day window | — | ~216 € | — |
+| | Per month |
+| --- | --- |
+| Estimate (S1-15) | 441 € |
+| Granted budget | 500 € |
+| Actual rate through 2026-06-13 (with K8s "Always Free" credit) | ~360 € |
+| Steady-state rate from 2026-06-14 (full K8s management fee) | ~430 € |
+| Actually billed for the 40-day window | ~216 € |
 
-We came in roughly **18 % under the estimate** and **30 % under the
-granted budget**. The estimate held its overall shape; the deltas come
-from two clear places, one in our favour and one against — see the
-notes after the table.
-
-These figures apply to the 40-day window through 2026-06-13 where the
-K8s Engine credit was active. From 2026-06-14 the credit no longer
-applies — see § Forecast through submission for the post-window
-picture.
+For the window where the K8s Engine credit applied (through
+2026-06-13) we ran **~18 % under the estimate** and **~30 % under the
+granted budget**. From 2026-06-14 the shared "Always Free" cap on the
+billing account was exhausted (see § Forecast). The steady-state rate
+from then on is **~430 €/month** — roughly on plan with the estimate
+(~3 % under) and ~14 % under the granted budget. The estimate held
+its overall shape; the deltas come from two clear places, one in our
+favour and one against — see the notes after the table.
 
 ## Per-category comparison
 
@@ -51,14 +53,18 @@ picture.
 | Cloud Logging (cluster + application logs) | 22.23 € | 0 € | The first 50 GiB of logs per month are part of "Always Free". The cluster is small and the apps don't log much, so we never came close. |
 | Cloud Monitoring (metrics, dashboards) | 0 € | ~25 € | GKE was created with "Google Managed Service for Prometheus" enabled. That GKE feature automatically forwards detailed cluster metrics (CPU, memory, pod health, container health) to Cloud Monitoring, on top of the in-cluster Prometheus + Grafana stack we already run. The estimate assumed only the free GKE metrics would be billed; the richer GKE-side path costs a few euro per month. |
 | Cloud Storage (Terraform state bucket) | 0.02 € | 0 € | 1 GiB of storage stays inside the "Always Free" allowance. |
-| **Total** | **441.27 €** | **~360 €** | **−18 % overall. Biggest positive: "Always Free" on the GKE control-plane fee (~55 €/month). Biggest negative: Cloud Monitoring via Managed Prometheus (~25 €/month), not modelled in the estimate. Everything else came in close to plan or under it.** |
+| **Total** | **441.27 €** | **~360 €** | **−18 % overall (credited window). Biggest positive: "Always Free" on the GKE control-plane fee (~55 €/month) — this saving stopped on 2026-06-14, see § Forecast below. Biggest negative: Cloud Monitoring via Managed Prometheus (~25 €/month), not modelled in the estimate. Everything else came in close to plan or under it.** |
 
 ## Why we paid less than planned
 
 - **GKE control-plane fee fell under "Always Free".** Single biggest
-  saving. The CSV shows a -41.59 € "Andere Einsparungen" line booked
-  against Kubernetes Engine over the 40-day window — that's the full
-  cluster management fee for the cluster-active days.
+  saving for the credited window. The CSV shows a -41.59 € "Andere
+  Einsparungen" line booked against Kubernetes Engine over the 40-day
+  window — that's the full cluster management fee for the credited
+  cluster-active days. This saving applied through 2026-06-13. From
+  2026-06-14 the shared cap on the billing account was exhausted; the
+  cluster now pays the full ~67 €/month management fee — see § Forecast
+  for what that means going forward.
 - **DNS lookup volume was ~5× lower than modelled.** The 2 M / month
   estimate assumed external visitors on the demo URLs; in practice
   traffic was almost entirely internal (cert checks, ExternalDNS,
@@ -95,18 +101,27 @@ the full ~$2.50 USD/day. Estimated additional charges from
 
 Estimated additional bill through deadline: **~130 €.**
 
+That works out to a steady-state per-month rate of **~430 €/month** —
+roughly on plan with the 441 €/month estimate (~3 % under) and
+~14 % under the 500 €/month granted budget. The −18 % undershoot
+shown in § Summary was driven by the K8s Engine credit; once that
+stopped, the actual rate moved very close to the estimate.
+
 ## Budget headroom
 
 | | Per month | Sprint 1–4 (≈2 months) |
 | --- | --- | --- |
 | Granted budget | 500 € | 1000 € |
 | Estimate (S1-15) | 441.27 € | 882.54 € (requested credit envelope) |
-| Actual (per-month equivalent) | ~360 € | ~720 € extrapolated |
+| Actual through 2026-06-13 (credited) | ~360 € | ~720 € extrapolated |
+| From 2026-06-14 (full K8s fee) | ~430 € | ~860 € extrapolated |
 | Actually billed | — | ≈216 € for the 40-day window |
 
-Roughly 80 €/month headroom under the estimate, 140 €/month under the
-granted budget. The Sprint 1–4 window came in well inside the credit
-envelope from S1-15.
+For the credited window we ran ~80 €/month under the estimate and
+~140 €/month under the granted budget. From 2026-06-14 onwards the
+rate moves closer to the estimate — still ~10 €/month under the
+estimate and ~70 €/month under the granted budget. The Sprint 1–4
+window came in well inside the credit envelope from S1-15.
 
 ## References
 
