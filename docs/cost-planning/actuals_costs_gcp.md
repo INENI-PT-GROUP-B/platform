@@ -22,7 +22,7 @@ Source data is in the `actuals/` folder:
 - A June-only slice (`..._06-2026.pdf` +
   `..._2026-06-01 - 2026-06-16.csv`) for reference.
 
-## Headline
+## Summary
 
 | | Estimate | Actual (per-month equivalent) | Granted budget |
 | --- | --- | --- | --- |
@@ -34,12 +34,17 @@ granted budget**. The estimate held its overall shape; the deltas come
 from two clear places, one in our favour and one against — see the
 notes after the table.
 
+These figures apply to the 40-day window through 2026-06-13 where the
+K8s Engine credit was active. From 2026-06-14 the credit no longer
+applies — see § Forecast through submission for the post-window
+picture.
+
 ## Per-category comparison
 
 | Category | Estimate / month | Actual / month | Reason |
 | --- | --- | --- | --- |
 | Compute Engine (worker nodes, boot disks, persistent disk storage) | 329.85 € | ~313 € | The cluster autoscaler is set to 3–6 worker nodes. It stayed at the 3-node minimum the whole window, which is exactly what the estimate assumed — so the numbers match almost 1:1. |
-| Kubernetes Engine (cluster management fee) | 62.42 € | ~7 € | Google charges a flat monthly fee for the control plane of every Kubernetes cluster. The "Always Free" tier waives that fee for one zonal cluster per billing account (a permanent free allowance, not a trial). We have exactly one zonal cluster, so the fee is waived. The estimate didn't count on this because it wasn't clear whether the educational account qualified. |
+| Kubernetes Engine (cluster management fee) | 62.42 € | ~7 € | Google charges a flat monthly fee for the control plane of every Kubernetes cluster (~70 €/month for a zonal cluster). GCP's "Always Free" tier provides a monthly credit (~70 €) for this fee per *billing account* — shared across all projects on it. The HAW educational billing account (`01870E-E5B717-2F48D1`) hosts multiple projects; the shared monthly cap absorbed our cluster's management fee through 2026-06-13, which is what the ~7 € rate above reflects. From 2026-06-14 the shared cap for June was reached and our cluster now pays the full management fee — the daily breakdown for that line on the Console no longer shows an offsetting credit. For the remainder of June through the submission deadline the cluster pays the full management fee; the cost forecast through submission below factors that in. |
 | Networking (Load Balancer, NAT Gateway, egress) | 23.41 € | ~15 € | The estimate modelled 50 GiB of monthly outbound traffic; demo + validation usage came in well under that. The first GB of egress per region per month is also part of the "Always Free" allowance. |
 | Cloud DNS (managed zone + lookups) | 0.86 € | 0.16 € | Cloud DNS bills per DNS lookup. Every browser hit on a `*.fhuebung.lol` URL, every Let's Encrypt cert check, every ExternalDNS update sends one. The estimate planned for 2 M lookups / month assuming some public demo traffic; actual usage was around 400 k over 40 days, dominated by internal traffic (cert checks, ExternalDNS, manual validation). |
 | Secret Manager (passwords, tokens, GHCR PAT) | 2.49 € | <0.10 € | The "Always Free" tier covers up to 6 active secret versions and 10 000 access operations per month. We stayed under both. |
@@ -73,6 +78,22 @@ notes after the table.
   line wasn't modelled. Worth flagging for the scaling discussion —
   this cost grows roughly with the number of namespaces, so on a 100-
   or 1000-tenant fleet it would become non-trivial.
+
+## Forecast through submission (2026-06-26)
+
+The cluster runs another ~9 days through the submission deadline.
+With the K8s Engine credit no longer applying for June from
+2026-06-14 (see the K8s row above), the management fee accrues at
+the full ~$2.50 USD/day. Estimated additional charges from
+2026-06-17 through 2026-06-26:
+
+- K8s Engine management fee: ~9 days × ~2.30 €/day ≈ 21 €
+- Compute Engine (worker nodes + boot disks + PD):
+  ~9 days × ~10.40 €/day ≈ 94 €
+- Cloud Monitoring (GMP): ~9 days × ~0.85 €/day ≈ 8 €
+- Networking, DNS, Logging: ~5 €.
+
+Estimated additional bill through deadline: **~130 €.**
 
 ## Budget headroom
 
