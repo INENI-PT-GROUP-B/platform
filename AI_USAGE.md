@@ -33,6 +33,62 @@ AI-assisted change.
 
 ---
 
+## 2026-06-15 — S4-04b cluster redeploy validation (pp)
+
+- **Tool:** Claude Code (local, macOS, Opus 4.7)
+- **Scope:**
+  - `INENI-PT-GROUP-B/platform-gitops`#108 — new
+    `docs/cluster-redeploy-validation.md` with the live evidence
+    (S4-04b, `Closes platform-gitops#65`).
+  - `INENI-PT-GROUP-B/platform-iac`#68 — `TEARDOWN.md` aligned with
+    the procedure the live run actually needed.
+  - `INENI-PT-GROUP-B/platform-iac`#69 — `force_destroy = true` on
+    the pg-backups bucket (`Closes platform-iac#67`).
+  - `INENI-PT-GROUP-B/platform-gitops`#109 —
+    `refreshInterval: 5m` on the per-tenant BasicAuth
+    ExternalSecret to narrow the ESO/SecretVersion race window
+    (`Closes platform-gitops#107`).
+  - Follow-up issues opened during the write-up:
+    `platform-iac#66` (broken IAM-preflight on gcloud SDK 572.0.0,
+    handed to mr), `platform-iac#67`, `platform-gitops#107`.
+  - `platform` — this entry.
+- **What:** S4-04b ran as a full teardown + rebootstrap against
+  `dotted-axle-495612-f4`. Claude assisted with the cluster-query
+  sequence at each phase — which `kubectl get` / `gcloud` to fire,
+  in which order, with which `jsonpath` — and with structuring the
+  evidence doc against the existing `multi-tenancy-validation.md` /
+  `lifecycle-tests.md` patterns. The live run surfaced eight gaps
+  between TEARDOWN.md as written and what an operator actually
+  needs today, plus one incorrect assumption in Issue #65's own
+  scope: pg-backups was listed as persistent there, but
+  `terraform state list` showed
+  `module.backup.google_storage_bucket.pg_backups` in the destroy
+  plan and the live destroy confirmed it. The cluster-redeploy doc
+  records the correction and `#67` makes the destroy actually
+  succeed on a populated bucket. The trickiest one to diagnose was
+  the ESO/SecretVersion race on the per-tenant BasicAuth: the
+  operator-visible plaintext in GSM looked like it should work, but
+  Traefik kept accepting only the old password. Claude helped
+  cross-check the GSM htpasswd version timestamps against the K8s
+  Secret content; the race became obvious once the three were lined
+  up, and `#109` narrows the catch-up window from 60 min to 5 min.
+  The `dependsOn` / `forceSync` options that would eliminate the
+  window entirely are tracked in `#107` for a follow-up.
+- **Verification:** Every cluster + GCP output in the docs was
+  pulled live with `kubectl` or `gcloud` and copied verbatim — no
+  values were invented or paraphrased. The bucket-persistence
+  correction was cross-checked against `terraform state list`
+  before `#67` was opened. The BasicAuth race was confirmed against
+  three independent signals (the ESO `ExternalSecret` `refreshTime`,
+  the Crossplane `SecretVersion` creation timestamp in GSM, and the
+  bcrypted hash in the K8s Secret data key — all three agreed).
+  Repo CI (yamllint, kubeconform, helm lint, markdownlint,
+  commitlint, pr-title, terraform fmt + validate + tflint)
+  validated every PR's manifest and doc shapes.
+- **Outcome:** `platform-gitops`#108 + #109 open, `platform-iac`#68
+  + #69 open, `platform-iac`#66 + #67 + `platform-gitops`#107
+  opened as follow-ups (mr taking #66). This entry in `platform`.
+
 ## 2026-06-14 — S3-10 rollout verification + S4-04a app crash recovery (pp)
 
 - **Tool:** Claude Code (local, macOS, Opus 4.7)
