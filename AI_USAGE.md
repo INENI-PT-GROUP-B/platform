@@ -33,6 +33,39 @@ AI-assisted change.
 
 ---
 
+## 2026-06-19 — S4-05 cost actuals comparison (pp)
+
+- **Tool:** Claude Code (local, macOS, Opus 4.7)
+- **Scope:**
+  - `INENI-PT-GROUP-B/platform`#121 — new
+    `docs/cost-planning/actuals_costs_gcp.md` sibling to the S1-15
+    `capacity_costs_gcp.md` estimate, plus the source data folder
+    `docs/cost-planning/actuals/` (`Closes platform#100`).
+  - `platform` — this entry.
+- **What:** S4-05 produced the actuals-vs-budget comparison for the
+  Sprint 1-4 active window. Claude was used in a supporting role on
+  the comparison itself: matching each service line in the GCP
+  billing CSV to the corresponding S1-15 estimate line, normalising
+  cluster-active services to a per-active-month rate (cost × 30 / 18
+  for the ~18 cluster-active days in the 40-day window), and
+  surfacing the two drivers of the credited-window −18 % delta —
+  GKE control-plane fee absorbed by "Always Free" on the positive
+  side, Cloud Monitoring via Managed Prometheus on the negative
+  side. The K8s Engine credit pattern took several rounds to read
+  correctly: the daily billing chart shows the management-fee bars
+  step up on 2026-06-14, which is before the S4-04b cluster
+  redeploy. Claude helped pin the cause to the shared Always Free
+  cap on the HAW educational billing account and to derive the
+  steady-state rate from 2026-06-14 onwards (~430 €/month — ~3 %
+  under the estimate, ~14 % under the granted budget).
+- **Verification:** Every figure in the comparison table was
+  cross-checked against the CSV that ships in the PR; the
+  2026-06-14 credit-exhaustion date was read off the daily billing
+  chart in the source PDF; the steady-state per-month rate was
+  re-derived by hand from the per-service rows. Repo CI
+  (markdownlint, commitlint, pr-title) validated the doc shape.
+- **Outcome:** merged (#121, 2026-06-19). Closes `platform#100`.
+
 ## 2026-06-15 — S4-04b cluster redeploy validation (pp)
 
 - **Tool:** Claude Code (local, macOS, Opus 4.7)
