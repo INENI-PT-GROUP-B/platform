@@ -52,7 +52,7 @@ sequence.
    breakdown:
    [`platform-iac/README.md`](https://github.com/INENI-PT-GROUP-B/platform-iac#bootstrap-order).
 3. **Onboard a tenant.** In `platform-gitops`, drop a 7-line
-   `XTenant` claim under `tenants/`, open a PR, squash-merge. Argo CD
+   `Tenant` claim under `tenants/`, open a PR, squash-merge. Argo CD
    syncs, Crossplane reconciles, the tenant is live at
    `<name>.fhuebung.lol` within minutes. End-to-end runbook:
    [`platform-gitops/docs/tenant-onboarding.md`](https://github.com/INENI-PT-GROUP-B/platform-gitops/blob/main/docs/tenant-onboarding.md).
