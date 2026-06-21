@@ -33,6 +33,35 @@ AI-assisted change.
 
 ---
 
+## 2026-06-21 — Consolidated catch-up: app hardening, CI modernization, tenant follow-ups, docs (rl)
+
+- **Tool:** Claude Code (local, WSL/Debian, Opus 4.7)
+- **Scope:** several smaller AI-assisted changes from 2026-06-08 to
+  2026-06-20, logged together rather than per PR:
+  - `app-frontend` — nginx runtime hardening (#22), version badge (#21),
+    Node-24 action bump (#23).
+  - `app-backend` — graceful shutdown (#26), validation/docs alignment
+    (#27), Node-24 action bump (#28).
+  - `.github` — semantic-pull-request action v6 bump (#13), organization
+    profile README (#15).
+  - `platform-gitops` — S3-09 tenant Composition follow-ups: BasicAuth
+    plaintext to GSM (#79), tenant egress to the API server (#78),
+    validation evidence (#82).
+  - `platform-iac` — provider-gcp Secret Manager IAM broadening (#60).
+- **What:** Claude assisted across this batch at a drafting / diagnosis
+  level — the frontend nginx hardening and version badge, the backend
+  graceful-shutdown handler, the Node-24 / semantic-pull-request CI sweep,
+  the S3-09 tenant follow-ups and the matching IAM broadening, and the
+  organization profile README. In each case the design, scoping, and final
+  review were the team member's; the AI output was a draft.
+- **Verification:** each change passed the repo CI gates (lint/build/test,
+  yamllint/kubeconform/helm lint, commitlint, pr-title, as applicable) and
+  a human review before merge; cluster-touching changes were checked live
+  where relevant.
+- **Outcome:** merged — `app-frontend` #21/#22/#23, `app-backend`
+  #26/#27/#28, `.github` #13/#15, `platform-gitops` #78/#79/#82,
+  `platform-iac` #60.
+
 ## 2026-06-19 — S4-05 cost actuals comparison (pp)
 
 - **Tool:** Claude Code (local, macOS, Opus 4.7)
@@ -175,7 +204,7 @@ AI-assisted change.
 - **Scope:** `INENI-PT-GROUP-B/platform`#113 + PR `platform`#115 — new `docs/presentation/demo-script.md`.
 - **What:** drafted the S5-02 reusable demo runbook for end-to-end tenant onboarding (pre-flight, optional pre-staged PR, claim shape, step-by-step demo trail, timing, fallback, cleanup). Cross-links to am's `tenant-onboarding.md` rather than duplicating. Tenant name parametrised as `livedemoNN` placeholder so the GSM identity is fresh per run.
 - **Verification:** every embedded `kubectl` command run against the live cluster with `staging` substituted; example outputs match real output verbatim. Composition-derived names cross-checked against the XRD and `xtenant-default.yaml`. Five mid-draft corrections from the live verification round (wrong GKE zone, wrong htpasswd Secret name in the tenant namespace, missing `-n crossplane-system` on `kubectl get tenant`, claim-vs-composite column header swap, overestimated timing total) — all caught before commit.
-- **Outcome:** PR `platform`#115 open as Draft.
+- **Outcome:** merged — `platform`#115 (2026-06-19), closes `platform`#113.
 
 ## 2026-06-13 — Crossplane `string.fmt` constant-name patch bug (rl)
 
