@@ -33,6 +33,27 @@ AI-assisted change.
 
 ---
 
+## 2026-06-21 — crossplane-compositions ServerSideDiff fix (rl)
+
+- **Tool:** Claude Code (local, WSL/Debian, Opus 4.8 1M context), plan mode at
+  max effort.
+- **Scope:** `platform-gitops`#111 (diagnosis) + PR `platform-gitops`#116 —
+  `applications/crossplane-compositions.yaml` and
+  `crossplane/compositions/xtenant-default.yaml`; `platform` — this entry.
+- **What:** Diagnosed why `crossplane-compositions` stayed permanently OutOfSync
+  after two merged fixes (#113/#114), via plan-mode exploration + live read-only
+  `kubectl` inspection. Corrected the root cause to kube-apiserver CRD
+  schema-defaults nested in `spec.resources[]` (`readinessChecks`,
+  `transforms[].string.type`) — not a webhook, not the top-level field-ownership
+  loop the prior PRs chased. Fix: enable Argo CD ServerSideDiff (one annotation)
+  and drop the superseded #113/#114 workarounds.
+- **Verification:** Simulated SSD read-only with `kubectl apply --server-side
+  --dry-run=server` — predicted `.spec` identical to live → Synced, no manual
+  step. Cross-checked the apiserver-default-vs-webhook distinction live and the
+  annotation against the official Argo CD docs. Plan reviewed before
+  implementing; repo CI green.
+- **Outcome:** PR `platform-gitops`#116 open (Closes #111), awaiting review.
+
 ## 2026-06-21 — Consolidated catch-up: app hardening, CI modernization, tenant follow-ups, docs (rl)
 
 - **Tool:** Claude Code (local, WSL/Debian, Opus 4.7)
