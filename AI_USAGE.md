@@ -52,7 +52,7 @@ AI-assisted change.
   step. Cross-checked the apiserver-default-vs-webhook distinction live and the
   annotation against the official Argo CD docs. Plan reviewed before
   implementing; repo CI green.
-- **Outcome:** PR `platform-gitops`#116 open (Closes #111), awaiting review.
+- **Outcome:** merged — `platform-gitops`#116 (2026-06-22), closes #111.
 
 ## 2026-06-21 — Consolidated catch-up: app hardening, CI modernization, tenant follow-ups, docs (rl)
 
