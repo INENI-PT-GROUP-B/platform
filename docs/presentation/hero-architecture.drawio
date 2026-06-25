@@ -1,0 +1,143 @@
+<mxfile host="Electron" agent="claude">
+  <diagram name="Hero Architecture" id="hero-arch">
+    <mxGraphModel dx="1920" dy="1080" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="Platform Architecture — Hero View" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=28;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="1840" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="band-sources-label" value="Sources &amp; External" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=2;fontColor=#888888;" vertex="1" parent="1">
+          <mxGeometry x="60" y="100" width="200" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="user" value="User" style="shape=actor;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="100" y="140" width="70" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="iac-repo" value="platform-iac&#10;(Terraform)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="240" y="150" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="gitops-repo" value="platform-gitops&#10;(Argo CD source)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="430" y="150" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ghcr" value="GHCR&#10;(images + chart)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="620" y="150" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="gsm" value="Google Secret Manager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="810" y="150" width="180" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="clouddns" value="Cloud DNS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="150" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="acme" value="Let's Encrypt&#10;(DNS-01)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1190" y="150" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="gcs" value="GCS pg-backups&#10;(per-tenant prefix)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="150" width="180" height="80" as="geometry" />
+        </mxCell>
+
+        <mxCell id="band-entry-label" value="Cluster Entry" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=2;fontColor=#888888;" vertex="1" parent="1">
+          <mxGeometry x="60" y="290" width="200" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="lb" value="Cloud Load Balancer   *.fhuebung.lol" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="330" width="800" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="traefik" value="Traefik   (TLS termination, BasicAuth middleware)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=16;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="450" width="800" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="band-platform-label" value="Platform Components" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=2;fontColor=#888888;" vertex="1" parent="1">
+          <mxGeometry x="60" y="560" width="200" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="platform-band" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="60" y="600" width="1800" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="argocd" value="Argo CD" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="90" y="625" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="crossplane" value="Crossplane (1.x P&amp;T)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="330" y="625" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="eso" value="ESO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="570" y="625" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="extdns" value="ExternalDNS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="810" y="625" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="certmgr" value="cert-manager" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="625" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="cnpg" value="CloudNativePG" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="1290" y="625" width="220" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="prom" value="Prometheus + Grafana" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="1530" y="625" width="310" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="band-tenants-label" value="Tenant Namespaces  (provisioned by Crossplane Composition)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=2;fontColor=#888888;" vertex="1" parent="1">
+          <mxGeometry x="60" y="730" width="800" height="24" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tenants-band" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82B366;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="60" y="770" width="1800" height="200" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tenant-a" value="tenant-a" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82B366;fontSize=15;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="90" y="790" width="560" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="ta-fe" value="Frontend" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="110" y="825" width="150" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="ta-be" value="Backend" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="275" y="825" width="150" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="ta-db" value="CNPG DB" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="440" y="825" width="190" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="ta-iso" value="Ingress + BasicAuth  ·  NetworkPolicy  ·  ResourceQuota + LimitRange" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="110" y="890" width="520" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tenant-b" value="tenant-b" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82B366;fontSize=15;fontStyle=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="670" y="790" width="560" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="tb-fe" value="Frontend" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="690" y="825" width="150" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="tb-be" value="Backend" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="855" y="825" width="150" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="tb-db" value="CNPG DB" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="825" width="190" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="tb-iso" value="Ingress + BasicAuth  ·  NetworkPolicy  ·  ResourceQuota + LimitRange" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="690" y="890" width="520" height="40" as="geometry" />
+        </mxCell>
+
+        <mxCell id="tenant-n" value="tenant-N  …" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#82B366;fontSize=15;fontStyle=1;dashed=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="790" width="580" height="160" as="geometry" />
+        </mxCell>
+
+        <mxCell id="footer" value="User traffic flows top → bottom (User → LB → Traefik → tenant ingress). Platform components are provisioned by Argo CD from platform-gitops; tenant resources are reconciled by Crossplane from a Tenant claim." style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=2;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="60" y="1000" width="1800" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="arrow-user-lb" style="endArrow=classic;html=1;strokeColor=#444444;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="user" target="lb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-lb-traefik" style="endArrow=classic;html=1;strokeColor=#444444;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="lb" target="traefik">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="arrow-traefik-tenants" style="endArrow=classic;html=1;strokeColor=#444444;strokeWidth=2;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="traefik" target="tenants-band">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
