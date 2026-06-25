@@ -2,7 +2,7 @@
 
 > Working draft for task **S5-01** (architecture slides) covering the full
 > 20-minute presentation. Companion artefacts: the demo script (S5-02,
-> Ronny), the app/Grafana demo slides (S5-03, Alex), the capacity actuals
+> Ronny), the live monitoring demo (S5-03, Alex), the capacity actuals
 > slides (S5-04, Patrick). This outline reserves space for those slides but
 > does not author them.
 >
@@ -21,13 +21,15 @@
 | 3. Capacity & cost — plan vs real  | pp    | 2:30    | 1–2    |
 | 4. Live demo: new tenant           | rl    | 5:30    | 1–2    |
 | 5. Scaling forecast                | mr    | 2:00    | 1      |
-| 6. Elective: monitoring page demo  | am    | 4:30    | 2      |
+| 6. Elective: monitoring demo (live) | am   | 4:30    | live   |
 | 7. Wrap-up + Q&A pointer           | mr    | 1:00    | 1      |
-| **Total**                          |       | **18:00** | **10–12** |
+| **Total**                          |       | **18:00** | **6–8** |
 
 Two-minute buffer for transitions and the inevitable demo hiccup. The deck
-sits at the upper bound (12) only if the cost block and the demo each need
-a second slide; default is 10.
+sits at the upper bound (8) only if the cost block and the tenant-demo block
+each need a second slide; default is 6. Block 6 is a live Grafana demo with
+no authored slides; a hidden backup slide carries the fallback screenshots
+and does not count toward the cap.
 
 ---
 
@@ -169,43 +171,38 @@ Per column list what changes:
 Explicit assumption on the slide: linear extrapolation assumes tenants stay
 on the `small` tier and traffic patterns match the demo workload.
 
-### Slide 6 — Elective topic: Monitoring (am, 2:30 of 4:30)
+### Block 6 — Elective: live monitoring demo (am, 4:30)
 
-**Owned by Alex (S5-03 covers the Grafana screenshots).** Slide content:
+**Owned by Alex (S5-03).** Delivered live in the browser — no authored
+slides. Self-hosted `kube-prometheus-stack`, exposed at
+`grafana.fhuebung.lol` via Traefik + wildcard cert; both dashboards are
+provisioned by Argo CD from ConfigMaps
+(`platform-gitops/applications/kube-prometheus-stack-dashboards.yaml`).
 
-- Stack: `kube-prometheus-stack` Helm chart, self-hosted in-cluster.
-- Exposed at `grafana.fhuebung.lol` via Traefik + wildcard cert.
-- Workload Identity for any GCP-side reads; no SA-JSON anywhere.
-- Dashboards loaded via Argo CD from
-  `platform-gitops/applications/kube-prometheus-stack-dashboards.yaml`.
+Flow (~6 min):
 
-What we monitor:
+1. **Frame:** elective topic = application health and resource monitoring;
+    two GitOps-provisioned dashboards for two audiences (app owner, platform
+    operator).
+2. **App Owner — Namespace View** (scoped to `tenant-demotenant1`): walk
+    health (pods, phase, restarts), then resources (per-pod CPU/memory, quota
+    usage); switch the namespace variable to another tenant and back to show
+    it is per-tenant scoped.
+3. **Live health event:** delete the backend pod and watch the dashboard
+    (5s refresh) catch the dip and the self-healing recovery; the tenant URL
+    goes briefly unavailable, then serves again. Narrate honestly —
+    "self-healing" for the pod delete, "restart" only for the in-place crash
+    variant; use whichever was confirmed in rehearsal.
+4. **Platform Admin — Cluster Overview:** node CPU/memory headroom, running
+    pods per namespace, and the ResourceQuota-per-namespace panels —
+    multi-tenancy made observable, quota headroom side by side.
+5. **Wrap:** Workload Identity for metrics reads (no SA-JSON); both
+    dashboards versioned in Git and reconciled by Argo CD.
 
-- **Cluster health:** node CPU/memory/disk, kubelet pressure, autoscaler
-  events.
-- **Platform components:** Argo CD sync status, Crossplane reconcile loop
-  durations, ESO secret-sync errors, cert-manager certificate expiry.
-- **Tenant workloads:** per-namespace CPU/memory vs `ResourceQuota`,
-  CNPG cluster health (replication lag, WAL archive backlog), HTTP error
-  rates from Traefik per tenant ingress.
+Fallback: a hidden backup slide with dated screenshots (healthy /
+during-event / Platform Admin) to talk over if the live demo breaks.
 
-### Slide 7 — Elective topic: Monitoring (am, 2:00 of 4:30) — live page
-
-Switch to browser, walk the audience through:
-
-1. Grafana → "Tenant overview" dashboard, filter to one tenant.
-2. Same dashboard during an artificial load spike (Ronny triggers a
-    small load test from the demo tenant during the talk, prepared
-    beforehand).
-3. Argo CD UI showing all `Application`s green; click into
-    `kube-prometheus-stack` to show the chain.
-4. One alert example (e.g. `KubePodCrashLooping`) — silenced before the
-    demo, shown as a routing example.
-
-Code to point at briefly: the dashboard ConfigMap loader and the
-`PrometheusRule` for tenant-level alerts.
-
-### Slide 8 — Wrap-up + Q&A (mr, 1:00)
+### Slide 6 — Wrap-up + Q&A (mr, 1:00)
 
 - The four grading pillars and where we land:
   - **Documentation & Hygiene:** Conventional Commits, squash-only, public
@@ -241,8 +238,8 @@ Code to point at briefly: the dashboard ConfigMap loader and the
 
 - [ ] Patrick: fill in actuals for Slide 3 once billing window closes.
 - [ ] Ronny: lock the live-demo tenant name and the path of the PR.
-- [ ] Alex: confirm Grafana dashboards (S4-01) are import-ready and the
-       "Tenant overview" dashboard exists.
+- [ ] Alex: rehearse the live monitoring demo once (both dashboards render,
+       backend pod-kill recovers); capture the dated fallback screenshot set.
 - [ ] Marco: convert this outline into the actual slide deck and circulate
        a read-only link in the team chat.
 - [ ] All: agree on a single fallback narrator if one of us is unavailable
